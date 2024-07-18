@@ -1,0 +1,91 @@
+body, .display-3{
+  font-family: Outfit-ExtraBold, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', AVerdana, 'Noto Sans',
+      'Liberation Sans', sans-serif;
+}
+
+@keyframes fadeInPage {
+  0% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.PlantDetailComs{
+  animation: fadeInPage 2.5s ease-out;
+  -ms-overflow-style: none;
+  scrollbar-width: none; 
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #405F43;
+  flex-direction: column;
+  padding-bottom: 100px;
+}
+
+.PlantDetailBg{
+  background-color: #405F43;
+}
+
+.App {
+  -ms-overflow-style: none;
+  scrollbar-width: none; 
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #405F43;
+  flex-direction: column;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+.backButton {
+  width: 50px;
+  height: 50px;
+  background: url('../src/image/back.png') no-repeat center center;
+  background-size: contain;
+  border: none;
+  cursor: pointer;
+}
+
+.backButton:hover {
+  opacity: 0.5;
+}
+
+@media (max-width: 575.98px) {
+  .backButton{
+     display: none;
+  }
+}
+
+@media (min-width: 576px) and (max-width: 767.98px) {
+  .backButton{
+    display: none;
+  }
+}
+
+/* @media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+} */
+
+/* @keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+} */

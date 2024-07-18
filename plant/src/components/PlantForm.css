@@ -1,0 +1,39 @@
+/* PlantForm.css */
+.modal-title {
+    font-family: Outfit-Bold, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', AVerdana, 'Noto Sans',
+    'Liberation Sans', sans-serif!important;
+}
+
+.form-label {
+    font-family: Outfit-Bold, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', AVerdana, 'Noto Sans',
+    'Liberation Sans', sans-serif!important;
+}
+
+.form-control {
+    font-family: Outfit-Bold, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', AVerdana, 'Noto Sans',
+    'Liberation Sans', sans-serif!important;
+}
+
+.button-primary {
+    font-family: Outfit-Bold, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', AVerdana, 'Noto Sans',
+    'Liberation Sans', sans-serif!important;
+}
+
+.formButton{
+    font-family: Outfit-Bold, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', AVerdana, 'Noto Sans',
+    'Liberation Sans', sans-serif!important;
+    background-color: #708F73;
+    color: #d9d9d9;
+    border: none;
+    font-size: 2vw;
+}
+
+.formButton:hover{
+    background-color: #d9d9d9;
+    color: #708F73;
+}
+
+.formButton:active{
+    background-color: #d9d9d9 !important;
+    color: #708F73 !important;
+}

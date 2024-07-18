@@ -1,0 +1,9 @@
+.App-bg {
+    width: 100vw;
+    height: 700px;
+    object-fit: cover;
+}
+
+.header {
+  position: inherit;
+}

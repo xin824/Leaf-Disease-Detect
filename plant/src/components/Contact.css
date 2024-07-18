@@ -1,0 +1,18 @@
+.contact-bg{
+    background-color: #d9d9d9;
+    /* height: 100px; */
+}
+
+.contact-font{
+    color: rgb(30, 66, 32);
+    font-size: 2vw;
+    font-family: Outfit-Regular, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', AVerdana, 'Noto Sans',
+      'Liberation Sans', sans-serif;
+}
+
+.contact-font2{
+    color: rgb(30, 66, 32);
+    font-size: 1.2vw;
+    font-family: Outfit-Regular, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', AVerdana, 'Noto Sans',
+      'Liberation Sans', sans-serif;
+}

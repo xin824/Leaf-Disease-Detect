@@ -1,0 +1,211 @@
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.listItem{
+  animation: fadeInUp 1.5s ease-out;
+}
+
+.ProgressBar{
+  /* position: absolute; */
+  display: flex;
+  flex-direction: column;
+  width:100%;
+  height: 70px;
+  margin-left: 20px;
+  margin-right: 20px;
+  align-items: center;
+}
+
+.progress{
+  border: 1px solid #d9d9d9;
+  background-color: #d9d9d9 !important;
+  border-radius: 50px !important;
+}
+
+@media (max-width: 575.98px) {
+  .progress{
+    border: 2px solid #d9d9d9;
+    height: 20px !important;
+  }
+  .goButton{
+    height:22px;
+    width: 22px;
+  }
+  .deleteButton{
+    height:25px;
+    width: 25px;
+  }
+  .deleteButtonUn{
+    height:25px;
+    width: 25px;
+  }
+}
+
+@media (min-width: 576px) and (max-width: 767.98px) {
+  .progress{
+    border: 2.5px solid #d9d9d9;
+    height: 25px !important;
+  }
+  .goButton{
+    height:27px;
+    width: 27px;
+  }
+  .deleteButton{
+    height:30px;
+    width: 30px;
+  }
+  .deleteButtonUn{
+    height:30px;
+    width: 30px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991.98px){
+  .progress{
+    border: 3px solid #d9d9d9;
+    height: 30px !important;
+  }
+  .goButton{
+    height:32px;
+    width: 32px;
+  }
+  .deleteButton{
+    height:40px;
+    width: 40px;
+  }
+  .deleteButtonUn{
+    height:40px;
+    width: 40px;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1199.98px){
+  .progress{
+    border: 3.5px solid #d9d9d9;
+    height: 35px !important;
+  }
+  .goButton{
+    height:37px;
+    width: 37px;
+  }
+  .deleteButton{
+    height:50px;
+    width: 50px;
+  }
+  .deleteButtonUn{
+    height:50px;
+    width: 50px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .progress{
+    border: 4px solid #d9d9d9;
+    height: 40px !important;
+  }
+  .goButton{
+    height:42px;
+    width: 42px;
+  }
+  .deleteButton{
+    height:60px;
+    width: 60px;
+  }
+  .deleteButtonUn{
+    height:60px;
+    width: 60px;
+  }
+}
+
+.PgBg{
+    /* position: absolute; */
+    width:100%;
+    height: 70px;
+    background-color: #D9D9D9;
+    border-radius: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.PgBar{
+    /* position: absolute; */
+    width:300px;
+    height: 70px;
+    background-color: #708F73;
+    border-radius: 50px;
+    border: 10px solid #D9D9D9;
+}
+
+.PgMask{
+    position: absolute;
+    width:15%;
+    height: 70px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    background-color: #d9d9d9;
+    border-top-left-radius: 50px;
+    border-bottom-left-radius: 50px;
+    z-index: 1;
+}
+
+.FontName{
+    color: #d9d9d9;
+    /* padding-left: 30px; */
+    /* font-size: 30px; */
+    font-size: 2vw;
+    font-family: Outfit-ExtraBold, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', AVerdana, 'Noto Sans',
+      'Liberation Sans', sans-serif;
+}
+
+.icon{
+    width: 60px;
+    height: 60px;
+}
+
+/* .imgContent{
+  width: 60px;
+  height: 60px;
+} */
+
+.goButton {
+  /* width: 60px;
+  height: 60px; */
+  background: url('../image/go.png') no-repeat center center;
+  background-size: contain;
+  border: none;
+  cursor: pointer;
+}
+
+.deleteButton {
+  /* width: 60px;
+  height: 60px; */
+  background: url('../image/connect.png') no-repeat center center;
+  background-size: contain;
+  border: none;
+  cursor: pointer;
+}
+
+.deleteButtonUn {
+  /* width: 60px;
+  height: 60px; */
+  background: url('../image/unconnect.png') no-repeat center center;
+  background-size: contain;
+  border: none;
+  cursor: pointer;
+}
+
+.goButton:hover {
+  opacity: 0.5;
+}

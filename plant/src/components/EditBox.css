@@ -1,0 +1,24 @@
+@keyframes marquee {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.PlantName {
+  font-size: 21.6px;
+  color: #1F3722;
+  font-family: Outfit-ExtraBold, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', AVerdana, 'Noto Sans',
+    'Liberation Sans', sans-serif!important;
+}
+
+.editButton {
+    width: 30px;
+    height: 30px;
+    background: url('../image/Edit.png') no-repeat center center;
+    background-size: contain;
+    border: none;
+    cursor: pointer;
+  }
+
+.editButton:hover{
+  opacity: 50%;
+}

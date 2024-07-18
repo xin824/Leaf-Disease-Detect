@@ -1,0 +1,32 @@
+.btn-collapsed{
+    background-color: #d9d9d9;
+    border: none;
+    border-radius: 50px;
+    color: #405F43;
+    font-family:'Outfit-Bold'!important;
+}
+
+.btn-collapsed:hover{
+    background-color: #76AA7B;
+    /* color: #F8FAF8; */
+}
+
+.btn-expanded{
+    background-color: #76AA7B;
+    border: none;
+    border-radius: 50px;
+    color: #F8FAF8;
+    font-family:'Outfit-Bold'!important;
+}
+
+.btn-expanded:hover{
+    background-color: #d9d9d9;
+    /* color: #405F43; */
+}
+
+.card-font{
+    background-color:#76AA7B;
+    color:#405F43;
+    box-shadow: none;
+    font-family:'Outfit-Regular';
+}
