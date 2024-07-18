@@ -1,7 +1,8 @@
 from flask import request, jsonify, send_from_directory
 from config import app, db
 from models import Plant
-
+import os
+import datetime
 
 @app.route("/plants", methods=["GET"])
 def get_plants():
@@ -69,6 +70,17 @@ def delete_all_plants():
         return jsonify({"message": f"Deleted {num_rows_deleted} plants"}), 200
     except Exception as e:
         return jsonify({"message": str(e)}), 500
+
+@app.route('/update_time/<path:image_name>')
+def get_image_last_modified(image_name):
+    image_full_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'plant', 'public', 'image', image_name))
+    
+    if os.path.exists(image_full_path):
+        last_modified_timestamp = os.path.getmtime(image_full_path)
+        last_modified_datetime = datetime.datetime.fromtimestamp(last_modified_timestamp)
+        return jsonify({'lastModified': last_modified_datetime.strftime('%Y-%m-%d %H:%M:%S')})
+    else:
+        return jsonify({'error': 'Image not found'}), 404
 
 @app.route('/')
 def serve():
