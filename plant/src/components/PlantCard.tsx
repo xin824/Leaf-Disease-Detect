@@ -1,7 +1,7 @@
 import './PlantCard.css'
 import EditBox from './EditBox';
 import { useEffect, useState } from 'react';
-import bg from './222.jpg'
+import wifiIP from '../wifi_ip';
 
 interface Plant {
     id: number;
@@ -29,7 +29,7 @@ function PlantCard({ plant, updateCallback}: PlantCardProps) {
 
     async function fetchImageLastModified(imageName: string): Promise<string | null> {
         try {
-            const response = await fetch(`http://10.5.16.152:5000/update_time/${encodeURIComponent(imageName)}`);
+            const response = await fetch(`${wifiIP}/update_time/${encodeURIComponent(imageName)}`);
             if (response.ok) {
                 const data = await response.json();
                 return data.lastModified;

@@ -3,22 +3,21 @@ import ListItem from './ListItem';
 import PlantForm from './PlantForm';
 import { useState, useEffect } from 'react';
 
-function DeviceList() {
-  const [plants, setPlants] = useState([]);
+interface Plant {
+  id: number;
+  ip: string;
+  name: string;
+  state: string;
+  image_path: string;
+  update_time: string;
+}
 
-  useEffect(() => {
-    fetchPlants()
-  }, []);
+interface DeviceListProps {
+  plants: Plant[];
+  updateCallback: () => void;
+}
 
-  const onUpdate = () => {
-    fetchPlants()
-  }
-
-  const fetchPlants = async () => {
-    const response = await fetch("http://10.5.16.152:5000/plants");
-    const data = await response.json();
-    setPlants(data.plants);
-  };
+function DeviceList({plants, updateCallback}: DeviceListProps) {
 
   return (
     <div className="container-lg mt-5 mb-5">
@@ -30,12 +29,12 @@ function DeviceList() {
           <div className="col-10 col-md-9">
             {/* <ListItem></ListItem> */}
             {plants.map((plant) => (
-              <ListItem plant={plant} updateCallback={onUpdate}></ListItem>
+              <ListItem plant={plant} updateCallback={updateCallback}></ListItem>
             ))}
           </div>
         </div>
         <div className="pt-lg-5 pt-2 align-items-center justify-content-center d-flex container-lg">
-          <PlantForm updateCallback={onUpdate}></PlantForm>
+          <PlantForm updateCallback={updateCallback}></PlantForm>
         </div>
       </div>
     </div>

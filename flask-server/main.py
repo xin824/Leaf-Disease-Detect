@@ -3,13 +3,41 @@ from config import app, db
 from models import Plant
 import os
 import datetime
+import socket
+
+import psutil
+
+
+def get_wifi_ipv4_address():
+    wifi_names = ["wlan0", "Wi-Fi", "Wireless Network Connection"]
+    for interface, snics in psutil.net_if_addrs().items():
+        if interface in wifi_names:
+            for snic in snics:
+                if snic.family == socket.AF_INET:
+                    return snic.address
+    return "Unable to get Wi-Fi IP Address"
+
+def save_wifi_ip():
+    wifi_ip = get_wifi_ipv4_address()
+    file_path = '../plant/src/wifi_ip.tsx'
+    try:
+        with open(file_path, 'w') as file:
+            # file.write(f"https://{wifi_ip}:5000")
+            file.write(f"var wifiIP = 'https://{wifi_ip}:5000';export default wifiIP;")
+        print({"message": "Wi-Fi IP Address saved successfully", "file_path": file_path})
+    except Exception as e:
+        print({"message": "Error saving Wi-Fi IP Address", "error": str(e)})
+
+# @app.route("/get_wifiIP", methods=["GET"])
+# def get_wifi_ip():
+#     wifi_ip = get_wifi_ipv4_address()
+#     return jsonify({"wifi_ip": wifi_ip})
 
 @app.route("/plants", methods=["GET"])
 def get_plants():
     plants = Plant.query.all()
     json_plants = list(map(lambda x: x.to_json(), plants))
     return jsonify({"plants": json_plants})
-
 
 @app.route("/create_plant", methods=["POST"])
 def create_plant():
@@ -95,4 +123,7 @@ if __name__ == "__main__":
         db.create_all()
 
     # app.run(debug=True)
+    # save_wifi_ip()
     app.run(host='0.0.0.0', port=5000, debug=True)
+    
+    

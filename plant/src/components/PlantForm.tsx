@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './PlantForm.css'
+import wifiIP from '../wifi_ip';
 
 interface PlantFormProps {
     updateCallback: () => void;
@@ -27,7 +28,7 @@ const PlantForm: React.FC<PlantFormProps> = ({ updateCallback }) => {
             image_path,
         };
 
-        const url = "http://10.5.16.152:5000/create_plant";
+        const url = `${wifiIP}/create_plant`;
 
         const options = {
             method: "POST",

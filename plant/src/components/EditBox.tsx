@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './EditBox.css';
+import wifiIP from '../wifi_ip';
 
 interface Plant {
   id: number;
@@ -43,7 +44,7 @@ function EditBox({ plant, updateCallback}: EditBoxProps) {
   };
 
   const updatePlantName = async (plantId: number, newName: string) => {
-      const url = `http://10.5.16.152:5000/update_plant/${plantId}`;
+      const url = `${wifiIP}/update_plant/${plantId}`;
       console.log(url)
       const options = {
         method: 'PATCH',

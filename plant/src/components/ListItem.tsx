@@ -1,6 +1,7 @@
 import './ListItem.css';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
+import wifiIP from '../wifi_ip';
 
 interface Plant {
   id: number;
@@ -27,6 +28,12 @@ function ListItem({ plant, updateCallback}: ListItemProps) {
       if (isInViewport(progressRef.current)) {
         setProgressValue(parseInt(plant.update_time, 10));
         window.removeEventListener('scroll', handleScroll);
+      }
+      if(progressValue!=0){
+        const interval = setInterval(() => {
+          setProgressValue(parseInt(plant.update_time, 10));
+          console.log('fetch')
+        }, 10000);
       }
     };
 
@@ -60,7 +67,7 @@ function ListItem({ plant, updateCallback}: ListItemProps) {
         const options = {
             method: "DELETE"
         }
-        const response = await fetch(`http://10.5.16.152:5000/delete_plant/${id}`, options)
+        const response = await fetch(`${wifiIP}/delete_plant/${id}`, options)
         if (response.status === 200) {
             updateCallback()
         } else {
@@ -85,10 +92,10 @@ function ListItem({ plant, updateCallback}: ListItemProps) {
             <div className="col px-3">
                 <div className='FontName'>{plant.name?plant.name:'Unknown'}</div>
                 <div className="progress" role="progressbar" aria-label="progressbar" 
-                     aria-valuenow={progressValue} aria-valuemin={0} aria-valuemax={100}
+                     aria-valuenow={parseInt(plant.update_time, 10)} aria-valuemin={0} aria-valuemax={100}
                      ref={progressRef}>
                     <div className="progress-bar"
-                         style={{ width: `${progressValue}%`, backgroundColor: '#708F73' }}
+                         style={{ width: `${parseInt(plant.update_time, 10)}%`, backgroundColor: '#708F73' }}
                     ></div>
                 </div>
             </div> 
