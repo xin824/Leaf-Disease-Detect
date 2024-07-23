@@ -15,9 +15,10 @@ interface Plant {
 interface DetailPageProps {
     plants: Plant[];
     updateCallback: () => void;
+    wifiIp: string;
 }
 
-const DetailPage: React.FC<DetailPageProps> = ({ plants, updateCallback}) => {
+const DetailPage: React.FC<DetailPageProps> = ({ plants, updateCallback, wifiIp}) => {
 
     const navigate = useNavigate();
 
@@ -41,7 +42,7 @@ const DetailPage: React.FC<DetailPageProps> = ({ plants, updateCallback}) => {
                 </div>
             </div>
             
-            <PlantCard plant={plant} updateCallback={onUpdate}></PlantCard>
+            <PlantCard plant={plant} updateCallback={onUpdate} wifiIp = {wifiIp}></PlantCard>
             <Solution></Solution>
         </div>
     </div>

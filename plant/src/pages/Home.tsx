@@ -16,13 +16,14 @@ interface Plant {
 interface HomeProps {
   updateCallback: () => void;
   plants: Plant[];
+  wifiIp: string;
 }
 
-function Home({updateCallback, plants}: HomeProps) {
+function Home({updateCallback, plants, wifiIp}: HomeProps) {
   return (
     <div className="App">
         <Header></Header>
-        <DeviceList plants={plants} updateCallback={updateCallback}></DeviceList>
+        <DeviceList plants={plants} updateCallback={updateCallback} wifiIp = {wifiIp}></DeviceList>
         <Contact></Contact>
     </div>
   );

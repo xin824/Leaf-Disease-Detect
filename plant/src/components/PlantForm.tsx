@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './PlantForm.css'
-import wifiIP from '../wifi_ip';
 
 interface PlantFormProps {
     updateCallback: () => void;
+    wifiIp: string;
 }
 
-const PlantForm: React.FC<PlantFormProps> = ({ updateCallback }) => {
+const PlantForm: React.FC<PlantFormProps> = ({ updateCallback,wifiIp }) => {
     const [show, setShow] = useState(false);
     const [ip, setIp] = useState('');
     const [state, setState] = useState('');
@@ -28,7 +28,7 @@ const PlantForm: React.FC<PlantFormProps> = ({ updateCallback }) => {
             image_path,
         };
 
-        const url = `${wifiIP}/create_plant`;
+        const url = `${wifiIp}/create_plant`;
 
         const options = {
             method: "POST",

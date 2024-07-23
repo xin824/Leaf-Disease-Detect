@@ -1,7 +1,6 @@
 import './PlantCard.css'
 import EditBox from './EditBox';
 import { useEffect, useState } from 'react';
-import wifiIP from '../wifi_ip';
 
 interface Plant {
     id: number;
@@ -15,9 +14,10 @@ interface Plant {
   interface PlantCardProps {
     plant: Plant | undefined;
     updateCallback: () => void;
+    wifiIp: string;
   }
 
-function PlantCard({ plant, updateCallback}: PlantCardProps) {
+function PlantCard({ plant, updateCallback, wifiIp}: PlantCardProps) {
     const [progressValue, setProgressValue] = useState(0);
     const [updateTime, setUpdateTime] = useState('Refresh to load last updated time');
 
@@ -29,7 +29,7 @@ function PlantCard({ plant, updateCallback}: PlantCardProps) {
 
     async function fetchImageLastModified(imageName: string): Promise<string | null> {
         try {
-            const response = await fetch(`${wifiIP}/update_time/${encodeURIComponent(imageName)}`);
+            const response = await fetch(`${wifiIp}/update_time/${encodeURIComponent(imageName)}`);
             if (response.ok) {
                 const data = await response.json();
                 return data.lastModified;
@@ -61,10 +61,11 @@ function PlantCard({ plant, updateCallback}: PlantCardProps) {
                 <div className="row g-0">
                     <div className="col-md-4 d-flex justify-content-center align-items-center">
                         <img src={`./image/${plant?.ip}.jpg`} className="img-fluid plantPicture" alt="plant picture"/>
+                        {/* <img src={`../../image/${plant?.ip}.jpg`} className="img-fluid plantPicture" alt="plant picture"/> */}
                     </div>
                     <div className="col-md-8 p-2">
                         <div className="card-body">
-                            <EditBox plant={plant} updateCallback={updateCallback}></EditBox>
+                            <EditBox plant={plant} updateCallback={updateCallback} wifiIp = {wifiIp}></EditBox>
                             <div className='PlantState'>{plant?.state}</div>
                             <div className="progress progress-cus2" role="progressbar" aria-label="progressbar" 
                                 aria-valuenow={progressValue} aria-valuemin={0} aria-valuemax={100}>

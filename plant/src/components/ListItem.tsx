@@ -1,7 +1,6 @@
 import './ListItem.css';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState, useRef } from 'react';
-import wifiIP from '../wifi_ip';
 
 interface Plant {
   id: number;
@@ -15,9 +14,10 @@ interface Plant {
 interface ListItemProps {
   plant: Plant;
   updateCallback: () => void;
+  wifiIp: string;
 }
 
-function ListItem({ plant, updateCallback}: ListItemProps) {
+function ListItem({ plant, updateCallback, wifiIp}: ListItemProps) {
 
   const navigate = useNavigate();
   const [progressValue, setProgressValue] = useState(0);
@@ -67,7 +67,7 @@ function ListItem({ plant, updateCallback}: ListItemProps) {
         const options = {
             method: "DELETE"
         }
-        const response = await fetch(`${wifiIP}/delete_plant/${id}`, options)
+        const response = await fetch(`${wifiIp}/delete_plant/${id}`, options)
         if (response.status === 200) {
             updateCallback()
         } else {

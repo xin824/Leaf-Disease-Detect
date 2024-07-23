@@ -2,13 +2,24 @@ import {HashRouter as Router, Routes, Route} from 'react-router-dom'
 import { useEffect, useState} from 'react';
 import Home from './pages/Home';
 import DetailPage from './pages/DetailPage';
-import wifiIP from './wifi_ip'
 
 function App() {
   const [plants, setPlants] = useState([]);
+  const [ip, setIp] = useState('');
+  var wifiIp = ''
 
   useEffect(() => {
-    fetchPlants()
+    fetch(`${process.env.PUBLIC_URL}/wifi_ip.txt`)
+      .then(response => response.text())
+      .then(data => {
+        wifiIp = data;
+      })
+      .then( () => {
+        onUpdate();
+      })
+      .catch(error => {
+        console.error('Error fetching the text file:', error);
+      });
 
     const interval = setInterval(() => {
       onUpdate();
@@ -22,18 +33,18 @@ function App() {
   }
 
   const fetchPlants = async () => {
-    const response = await fetch(`${wifiIP}/plants`);
+    const response = await fetch(`${wifiIp}/plants`);
     const data = await response.json();
-    console.log(`${wifiIP}/plants`)
+    console.log(`${wifiIp}/plants`)
     setPlants(data.plants);
   };
 
   return (
     <Router>
       <Routes>
-        <Route path='/' element={<Home  plants={plants} updateCallback={onUpdate}/>}/>
+        <Route path='/' element={<Home  plants={plants} updateCallback={onUpdate} wifiIp = {wifiIp}/>}/>
         {/* <Route path='/Detail' element={<DetailPage/>}/> */}
-        <Route path="/Detail/:id" element={<DetailPage plants={plants} updateCallback={onUpdate}/>} />
+        <Route path="/Detail/:id" element={<DetailPage plants={plants} updateCallback={onUpdate} wifiIp = {wifiIp}/>} />
       </Routes>
     </Router>
   );

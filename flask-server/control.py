@@ -40,7 +40,7 @@ def set_plant_disconnect(ip):
         return plant_to_update
     return None
 
-# with app.app_context():
+with app.app_context():
 
     # delete plant: 
     # deleted_plant = delete_plant_by_ip('192.168.1.1')
@@ -49,7 +49,7 @@ def set_plant_disconnect(ip):
     # new_plant = add_plant('192.168.1.3')
 
     # update plant (new disease detect result available from model)
-    # updated_plant = update_plant_ip('192.168.1.3', 'healthy', '0')
+    updated_plant = update_plant_ip('192.168.1.3', 'disease', '50')
 
     # set plant connection state to 'connect' (default)
     # set_plant_connect('192.168.1.1')

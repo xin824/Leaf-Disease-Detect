@@ -15,9 +15,10 @@ interface Plant {
 interface DeviceListProps {
   plants: Plant[];
   updateCallback: () => void;
+  wifiIp: string;
 }
 
-function DeviceList({plants, updateCallback}: DeviceListProps) {
+function DeviceList({plants, updateCallback,wifiIp}: DeviceListProps) {
 
   return (
     <div className="container-lg mt-5 mb-5">
@@ -29,12 +30,12 @@ function DeviceList({plants, updateCallback}: DeviceListProps) {
           <div className="col-10 col-md-9">
             {/* <ListItem></ListItem> */}
             {plants.map((plant) => (
-              <ListItem plant={plant} updateCallback={updateCallback}></ListItem>
+              <ListItem plant={plant} updateCallback={updateCallback} wifiIp = {wifiIp}></ListItem>
             ))}
           </div>
         </div>
         <div className="pt-lg-5 pt-2 align-items-center justify-content-center d-flex container-lg">
-          <PlantForm updateCallback={updateCallback}></PlantForm>
+          <PlantForm updateCallback={updateCallback} wifiIp = {wifiIp}></PlantForm>
         </div>
       </div>
     </div>
