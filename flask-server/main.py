@@ -4,9 +4,14 @@ from models import Plant
 import os
 import datetime
 import socket
-
+import subprocess
 import psutil
+import time
 
+def get_hostname():
+    result = subprocess.run(['hostname','-I'], capture_output = True, text = True, check = True)
+    hostname = result.stdout.split(" ", 1)
+    return hostname[0]
 
 def get_wifi_ipv4_address():
     wifi_names = ["wlan0", "Wi-Fi", "Wireless Network Connection"]
@@ -18,12 +23,13 @@ def get_wifi_ipv4_address():
     return "Unable to get Wi-Fi IP Address"
 
 def save_wifi_ip():
-    wifi_ip = get_wifi_ipv4_address()
-    file_path = '../plant/src/wifi_ip.tsx'
+    wifi_ip = get_hostname()
+    
+    file_path = '../plant/build/wifi_ip.txt'
     try:
         with open(file_path, 'w') as file:
             # file.write(f"https://{wifi_ip}:5000")
-            file.write(f"var wifiIP = 'https://{wifi_ip}:5000';export default wifiIP;")
+            file.write(f"http://{wifi_ip}:5000")
         print({"message": "Wi-Fi IP Address saved successfully", "file_path": file_path})
     except Exception as e:
         print({"message": "Error saving Wi-Fi IP Address", "error": str(e)})
@@ -119,11 +125,10 @@ def serve_static(path):
     return send_from_directory(app.static_folder, path)
 
 if __name__ == "__main__":
+    save_wifi_ip()
     with app.app_context():
         db.create_all()
 
     # app.run(debug=True)
-    # save_wifi_ip()
     app.run(host='0.0.0.0', port=5000, debug=True)
-    
     

@@ -5,9 +5,9 @@ from PIL import Image, UnidentifiedImageError
 import os
 from datetime import datetime
 
-output_directory = "saved_images"
-if not os.path.exists(output_directory):
-    os.makedirs(output_directory)
+image_directory = "./image"
+if not os.path.exists(image_directory):
+    os.makedirs(image_directory)
 
 def is_valid_image(image_bytes):
     try:
@@ -23,15 +23,16 @@ async def handle_connection(websocket, path):
     while True:
         try:
             message = await websocket.recv()
-            print(len(message))
+            # print(len(message))
+            ip_address = websocket.remote_address[0]
+            
             if len(message) > 5000:
                 if is_valid_image(message):
                     current_time = datetime.now()
                     time_diff = (current_time - last_saved_time).total_seconds()
 
                     if time_diff >= 5: 
-                        timestamp = current_time.strftime("%Y%m%d%H%M%S%f")
-                        file_path = os.path.join(output_directory, f"image_{timestamp}.jpg")
+                        file_path = os.path.join(image_directory, f"{ip_address}.jpg")
                         
                         with open(file_path, "wb") as f:
                             f.write(message)

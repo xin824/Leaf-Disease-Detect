@@ -10,7 +10,7 @@ def delete_plant_by_ip(ip):
     return None
 
 def add_plant(ip):
-    new_plant = Plant(ip=ip, name=None, state='Unknown', image_path='connect', update_time='0')
+    new_plant = Plant(ip=ip, name=None, state='Unknown', image_path='disconnect', update_time='0')
     db.session.add(new_plant)
     db.session.commit()
     return new_plant
@@ -40,7 +40,7 @@ def set_plant_disconnect(ip):
         return plant_to_update
     return None
 
-with app.app_context():
+# with app.app_context():
 
     # delete plant: 
     # deleted_plant = delete_plant_by_ip('192.168.1.1')
@@ -49,7 +49,7 @@ with app.app_context():
     # new_plant = add_plant('192.168.1.3')
 
     # update plant (new disease detect result available from model)
-    updated_plant = update_plant_ip('192.168.1.3', 'disease', '50')
+    # updated_plant = update_plant_ip('192.168.1.3', 'disease', '10')
 
     # set plant connection state to 'connect' (default)
     # set_plant_connect('192.168.1.1')

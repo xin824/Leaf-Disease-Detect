@@ -69,10 +69,10 @@ function PlantCard({ plant, updateCallback, wifiIp}: PlantCardProps) {
                             <div className='PlantState'>{plant?.state}</div>
                             <div className="progress progress-cus2" role="progressbar" aria-label="progressbar" 
                                 aria-valuenow={progressValue} aria-valuemin={0} aria-valuemax={100}>
-                                <div className="progress-bar" style={{ width: `${plant?.update_time}%`, backgroundColor: '#92BA96', borderRadius: '50px'}}></div>
+                                <div className="progress-bar" style={{ width: `50%`, backgroundColor: '#92BA96', borderRadius: '50px'}}></div>
                             </div>
                             <p className="card-text">
-                                <small className="font-time justify-content-end d-flex">Last updated: {updateTime}</small>
+                                <small className="font-time justify-content-end d-flex">Last updated: {plant?.update_time}</small>
                             </p>
                         </div>
                     </div>
