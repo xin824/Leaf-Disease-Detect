@@ -40,7 +40,7 @@ class Bound(NeuronContext):
         self.iou_thres = iou_thres
         """IOU threshold for object detection"""
 
-    def draw_boxes(self, image, box, score, class_id):
+    def draw_boxes(self, image, box, score, class_id, color=(0, 255, 0)):
         """Draws a bounding box on the image based on the detected class and confidence
 
         Parameters
@@ -57,7 +57,7 @@ class Bound(NeuronContext):
         # Convert the box coordinates to integers
         x1, y1, w, h = [int(v) for v in box]
         # Set the color for the bounding box
-        color = [0, 255, 0]  # green
+
         # Draw the bounding box on the image
         cv2.rectangle(image, (x1, y1), (x1 + w, y1 + h), color, 2)
         # Define the label text
@@ -101,8 +101,135 @@ class Bound(NeuronContext):
         dst_img = np.expand_dims(dst_img, axis=0)  # 扩展维度添加 batch_size 维度
 
         return dst_img
-        
+    def add_disease_label(self, image, prediction, confidence, color):
+        print("ADDing diseaes label")
+        box = self.get_box()
+        x, y, w, h = [int(v) for v in box]
+        label_image = image.copy()
+        label_text = f'{prediction} ({confidence:.2f})'
+        font = cv2.FONT_HERSHEY_TRIPLEX
+        font_scale = 0.4
+        thickness = 1
 
+        print("Using width and height")
+        (text_width, text_height), baseline = cv2.getTextSize(label_text, font, font_scale, thickness)
+        print("Got width and height")
+        cv2.rectangle(label_image, (x+3, y), (x + text_width + 8, y + baseline + 10), (255, 255, 255), cv2.FILLED)
+        print("Putting text")
+        cv2.putText(label_image, label_text, (x + 5,y + 10), cv2.FONT_HERSHEY_TRIPLEX, 0.4, color, 1, 1)
+        return label_image  
+    def get_box(self):
+        print("CALLING")
+        img_w = 128
+        img_h = 128
+        print("GEttting the prediction")
+        output = self.GetOutputBuffer(0)
+        print("GOt the prediction")
+        # Initilize lists to store bounding box coordinates, scores and class_ids
+
+        boxes = []
+        scores = []
+        class_ids = []
+
+        for pred in output:
+            # Transpose the output from (24, 8400) to (8400, 24)
+            pred = np.transpose(pred)
+            for box in pred:
+                # Get bounding box coordinates, scaled by image width and height
+                x, y, w, h = box[:4]
+                x = int(x * img_w)
+                y = int(y * img_h)
+                w = int(w * img_w)
+                h = int(h * img_h)
+
+                # Calculate center coordinates of the bounding box
+                x1 = x - w / 2
+                y1 = y - h / 2
+
+                # Append the bounding box coordinates, scores and class_ids to their respective lists
+                boxes.append([x1, y1, w, h])
+                idx = np.argmax(box[4:])
+                scores.append(box[idx + 4])
+                class_ids.append(idx)
+
+        # Filter out low confidence bounding boxes using non-maximum suppression
+        indices = cv2.dnn.NMSBoxes(
+            boxes, scores, self.confidence_thres, self.iou_thres
+        )
+        
+        if len(indices) == 0:
+            return None
+
+        final_scores = [scores[i] for i in indices]
+        final_boxes = [boxes[i] for i in indices]
+        final_class_ids = [class_ids[i] for i in indices]
+
+        max_score = max(final_scores)
+        max_indices = np.where(final_scores == max_score)[0]
+        max_index = max_indices[0]
+        # Get the bounding box coordinates, score and class_id for the selected bounding boxes
+        box = final_boxes[max_index]
+        return box
+    def draw_bbox_on_image(self, output_image, color=(0, 255, 0)):
+        print("CALLING")
+        img_w = 128
+        img_h = 128
+        print("GEttting the prediction")
+        output = self.GetOutputBuffer(0)
+        print("GOt the prediction")
+        # Initilize lists to store bounding box coordinates, scores and class_ids
+
+        boxes = []
+        scores = []
+        class_ids = []
+
+        for pred in output:
+            # Transpose the output from (24, 8400) to (8400, 24)
+            pred = np.transpose(pred)
+            for box in pred:
+                # Get bounding box coordinates, scaled by image width and height
+                x, y, w, h = box[:4]
+                x = int(x * img_w)
+                y = int(y * img_h)
+                w = int(w * img_w)
+                h = int(h * img_h)
+
+                # Calculate center coordinates of the bounding box
+                x1 = x - w / 2
+                y1 = y - h / 2
+
+                # Append the bounding box coordinates, scores and class_ids to their respective lists
+                boxes.append([x1, y1, w, h])
+                idx = np.argmax(box[4:])
+                scores.append(box[idx + 4])
+                class_ids.append(idx)
+
+        # Filter out low confidence bounding boxes using non-maximum suppression
+        indices = cv2.dnn.NMSBoxes(
+            boxes, scores, self.confidence_thres, self.iou_thres
+        )
+        
+        if len(indices) == 0:
+            return None
+
+        final_scores = [scores[i] for i in indices]
+        final_boxes = [boxes[i] for i in indices]
+        final_class_ids = [class_ids[i] for i in indices]
+
+        max_score = max(final_scores)
+        max_indices = np.where(final_scores == max_score)[0]
+        max_index = max_indices[0]
+        # Get the bounding box coordinates, score and class_id for the selected bounding boxes
+        box = final_boxes[max_index]
+        score = final_scores[max_index]
+        class_id = final_class_ids[max_index]
+        print("Got to drawing boxes")
+
+        self.draw_boxes(output_image, box, score, class_id, color)
+        print("Done drawing boxes")
+        return output_image
+
+    
     def postprocess(self, image):
         """
         Post-processing function for YOLOv8 model
@@ -153,6 +280,8 @@ class Bound(NeuronContext):
             boxes, scores, self.confidence_thres, self.iou_thres
         )
         
+        if len(indices) == 0:
+            return None
 
         final_scores = [scores[i] for i in indices]
         final_boxes = [boxes[i] for i in indices]
@@ -176,9 +305,9 @@ class Bound(NeuronContext):
         h = (int(h) if int(h) > 0 else 0)
  
         cropped_image =bgr_img[y:y+h, x:x+w]
-        print(cropped_image.shape)
-        cv2.imshow("result", bgr_img)
-        cv2.waitKey(1000)
+        # print(cropped_image.shape)
+        # cv2.imshow("result", bgr_img)
+        # cv2.waitKey(1000)
         return cropped_image
 
 

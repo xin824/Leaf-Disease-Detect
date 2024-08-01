@@ -22,6 +22,7 @@ def get_wifi_ipv4_address():
                     return snic.address
     return "Unable to get Wi-Fi IP Address"
 
+@app.route('/save_wifi_ip')
 def save_wifi_ip():
     wifi_ip = get_hostname()
     
@@ -33,6 +34,13 @@ def save_wifi_ip():
         print({"message": "Wi-Fi IP Address saved successfully", "file_path": file_path})
     except Exception as e:
         print({"message": "Error saving Wi-Fi IP Address", "error": str(e)})
+    file_path2 = '../plant/public/wifi_ip.txt'
+    try:
+        with open(file_path2, 'w') as file:
+            # file.write(f"https://{wifi_ip}:5000")
+            file.write(f"http://{wifi_ip}:5000")
+    except Exception as e:
+        print({"message": "Error saving Wi-Fi IP Address in public folder", "error": str(e)})
 
 # @app.route("/get_wifiIP", methods=["GET"])
 # def get_wifi_ip():

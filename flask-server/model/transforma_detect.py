@@ -64,7 +64,8 @@ class Detect(NeuronContext):
         bgr_img = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
         # Initilize lists to store bounding box coordinates, scores and class_ids
 
-        cv2.imshow("result", bgr_img)
+        # cv2.imshow("result", bgr_img)
+        
 
 def main(mdla_path, image_path):
     """Main function to test YOLOv8 model using NeuronHelper

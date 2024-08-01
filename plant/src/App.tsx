@@ -35,7 +35,6 @@ function App() {
   const fetchPlants = async () => {
     const response = await fetch(`${wifiIp}/plants`);
     const data = await response.json();
-    console.log(`${wifiIp}/plants`)
     setPlants(data.plants);
   };
 

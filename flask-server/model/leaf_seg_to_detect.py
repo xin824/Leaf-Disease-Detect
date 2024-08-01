@@ -24,7 +24,6 @@ def main(mdla_path_bound, mdla_path_segment, mdla_path_detect, image_path):
     
     image = Image.open(image_path)
     image = image.resize((128, 128))
-    
     # Check if the picture has 4 channels
     if image.mode == 'RGBA':
         # 转换为 RGB，去除alpha通道
@@ -32,7 +31,6 @@ def main(mdla_path_bound, mdla_path_segment, mdla_path_detect, image_path):
 
     input_array = bound.img_preprocess(image)
 
- 
     # Set input buffer for inference
     bound.SetInputBuffer(input_array, 0)
     # Execute model
@@ -40,8 +38,10 @@ def main(mdla_path_bound, mdla_path_segment, mdla_path_detect, image_path):
     if ret != True:
         print("Failed to Execute")
         return
-    
+        
     bound_img = bound.postprocess(image)
+    
+    print(bound_img.shape)
     # bound_img = cv2.cvtColor(bound_img, cv2.COLOR_RGB2BGR)
     cv2.imshow("result", bound_img)
     cv2.waitKey(1000)
@@ -111,7 +111,7 @@ def main(mdla_path_bound, mdla_path_segment, mdla_path_detect, image_path):
 
     # Postprocess output
     class_names = ['blight','citrus' ,'healthy', 'measles', 'mildew', 'mite', 'mold', 'rot', 'rust', 'scab', 'scorch', 'spot', 'virus']
-    # print(detect.GetOutputBuffer(0))
+    #print(detect.GetOutputBuffer(0))
     print(class_names[np.argmax(detect.GetOutputBuffer(0))])
     # detect.postprocess(image)
 
@@ -128,7 +128,7 @@ if __name__ == "__main__":
                         help='Path to the Bound mdla file')
     parser.add_argument('--dla-segment-path', type=str, default='seg_diff_layer.mdla',
                         help='Path to the Segmentation mdla file')
-    parser.add_argument('--dla-detect-path', type=str, default='det_noseg_v2.mdla',
+    parser.add_argument('--dla-detect-path', type=str, default='det_noseg.mdla',
                         help='Path to the Detection mdla file')
     parser.add_argument('--image-path', type=str, default='bound_test.JPG',
                         help='Path to the input image')

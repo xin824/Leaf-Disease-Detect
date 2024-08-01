@@ -20,12 +20,20 @@ interface Plant {
 function PlantCard({ plant, updateCallback, wifiIp}: PlantCardProps) {
     const [progressValue, setProgressValue] = useState(0);
     const [updateTime, setUpdateTime] = useState('Refresh to load last updated time');
+    const [key, setKey] = useState(new Date());
 
     useEffect(() => {
-        if(plant)
-            setProgressValue(parseInt(plant.update_time));
-
+        //if(plant)
+        //    setProgressValue(parseInt(plant.update_time));
+        var interval = setInterval(() => tick(), 1000);
+	
+	return () => clearInterval(interval);
     }, []);
+    
+    function tick(){
+        setKey(new Date());
+        console.log(new Date().getSeconds().toString());
+    }
 
     async function fetchImageLastModified(imageName: string): Promise<string | null> {
         try {
@@ -60,7 +68,7 @@ function PlantCard({ plant, updateCallback, wifiIp}: PlantCardProps) {
             <div className="card m-5 p-md-4 p-5">
                 <div className="row g-0">
                     <div className="col-md-4 d-flex justify-content-center align-items-center">
-                        <img src={`./image/${plant?.ip}.jpg`} className="img-fluid plantPicture" alt="plant picture"/>
+                        <img src={`./image/${plant?.ip}/${new Date().getSeconds().toString()}.jpg`} className="img-fluid plantPicture" alt="plant picture"/>
                         {/* <img src={`../../image/${plant?.ip}.jpg`} className="img-fluid plantPicture" alt="plant picture"/> */}
                     </div>
                     <div className="col-md-8 p-2">
