@@ -121,31 +121,45 @@ async def handle_connection(websocket, path):
                 if is_valid_image(message):
                     current_time = datetime.now()
                     time_diff = (current_time - last_saved_time).total_seconds()
-                    
+                    time_thre = 3
                     ''' save a image every five seconds '''
-                    if time_diff >= 5: 
+                    if time_diff >= time_thre: 
                         
                         file_path_new = os.path.join(image_directory, ip_address, f"new.jpg")
+                        save_path_new = os.path.join(image_directory, ip_address, f"annotation.jpg")
+                        
+                        if os.path.exists(save_path_new):
+                            os.remove(save_path_new)
+                            print(f"File '{save_path_new}' has been deleted.")
+                        else:
+                            print(f"File '{save_path_new}' does not exist.")
+                        
                         with open(file_path_new, "wb") as f:
                             f.write(message)
                             
-                        image = Image.open(file_path_new)
-                        image = image.resize((128*3, 128*3), Image.LANCZOS)
-                        
-                        subprocess.run(['python3', './leaf_seg_with_annotation.py','--save-path','../'+file_path], capture_output=True, text=True)
-                        for i in range(5):
-                            st = ((datetime.now().second+2+i) if (datetime.now().second+2+i)<60 else (datetime.now().second+2+i-60))
-                            file_path = os.path.join(image_directory, ip_address, f"{str(st)}.jpg")
-                            #save image with the bounding box 
-                            image.save(file_path)
-                            print(f"Saved image: {file_path}")
-                            
                         ''' run the model with the new image '''
                         os.chdir('./model')
-                        result = subprocess.run(['python3', './leaf_seg_to_detect_v3.py','--image-path','../'+file_path,], capture_output=True, text=True)
+                        result = subprocess.run(['python3', './leaf_seg_with_annotation.py', '--image-path','../'+file_path_new, '--save-path','../'+save_path_new], capture_output=True, text=True)
                         os.chdir('../')
                         
+                        if(os.path.exists(save_path_new)):
+                            print("Found a saved image: " + save_path_new)
+                            image = Image.open(save_path_new)
+                        else:
+                            image = Image.open(file_path_new)
+                        
+                        image = image.resize((128*3, 128*3), Image.LANCZOS)
+                        
+                        file_path = ""
+                        
+                        for i in range(time_thre + 1):
+                            st = ((datetime.now().second+1+i) if (datetime.now().second+1+i)<60 else (datetime.now().second+1+i-60))
+                            file_path = os.path.join(image_directory, ip_address, f"{str(st)}.jpg")
+                            image.save(file_path)
+                            print(f"Saved image: {file_path}")
+                        
                         if result.stdout:
+                        
                             state = read_model_result(result.stdout)
                             print(result.stdout)
                             print(f"Device: {ip_address} detect result: {state}")

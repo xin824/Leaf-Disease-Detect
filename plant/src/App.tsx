@@ -23,7 +23,7 @@ function App() {
 
     const interval = setInterval(() => {
       onUpdate();
-    }, 5000);
+    }, 1000);
 
     return () => clearInterval(interval);
   }, []);

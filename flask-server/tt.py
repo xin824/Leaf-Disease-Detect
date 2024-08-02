@@ -18,7 +18,7 @@ def read_model_result(lines):
 image_path = './test.JPG'
 os.chdir('./model')
 #result = subprocess.run(['python3', './leaf_seg_to_detect.py','--image-path','../../plant/build/image/172.20.10.5.jpg',], capture_output=True, text=True)
-result = subprocess.run(['python3', './leaf_seg_to_detect_v3.py','--image-path','../test.JPG',], capture_output=True, text=True)
+result = subprocess.run(['python3', './leaf_seg_with_annotation.py','--image-path','../test.JPG',], capture_output=True, text=True)
 print(result.stdout)
 #print(read_model_result(result.stdout))
 os.chdir('../')

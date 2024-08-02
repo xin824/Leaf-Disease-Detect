@@ -7,6 +7,7 @@ import argparse
 import numpy as np
 import cv2
 import time
+import os
 
 def overlay_mask_on_image(mask, original_image, color=[0, 255, 0], alpha=0.3):
     print(color)
@@ -108,6 +109,7 @@ def main(mdla_path_bound, mdla_path_segment, mdla_path_detect, image_path, save_
     # segment_img = (segment_img * 255)
     image_pil = Image.fromarray(segment_img)
     segment_img = image_pil.resize((128, 128), Image.LANCZOS)
+    print("before bound")
     bound_img = bound.postprocess(segment_img)
 
     # print(type(bound_img))
@@ -155,15 +157,19 @@ def main(mdla_path_bound, mdla_path_segment, mdla_path_detect, image_path, save_
     total_time = end_time - start_time
     print(str(total_time) + 's')
     
-    color = (0, 0, 255)
+    color = (255, 0, 0)
     if(disease == "healthy"):
         color = (0,255, 0)
     print("Before adding fancy mask")
 
     print("Finished segmenting")
+
     segment_img_with_overlay = overlay_mask_on_image(need, original_image, color)
     annotated_image = bound.draw_bbox_on_image(segment_img_with_overlay, color)
     annotated_image = bound.add_disease_label(annotated_image, disease, 0.9, color)
+    
+
+    
     print("Finish annotation")
     # print(type(bound_img))
 
@@ -177,11 +183,19 @@ def main(mdla_path_bound, mdla_path_segment, mdla_path_detect, image_path, save_
     
 
     # bound_img = cv2.cvtColor(bound_img, cv2.COLOR_RGB2BGR)
-    cv2.imshow("result", annotated_image)
-    cv2.waitKey(1000)
+    # cv2.imshow("result", annotated_image)
+    # cv2.waitKey(1000)
+    # cv2.imwrite("annotation.jpg", annotated_image)
+    #sv_path = os.path.dirname(image_path)
+    sv_path = save_path
+    print("SV PATH: " + sv_path)
     image = Image.fromarray(annotated_image)
+    print("image:" + image_path)
 
-    image.save(save_path)
+
+    #sv_path += "/annotation.jpg"
+    #print(sv_path)
+    image.save(sv_path)
 
 
 
@@ -191,7 +205,7 @@ if __name__ == "__main__":
                         help='Path to the Bound mdla file')
     parser.add_argument('--dla-segment-path', type=str, default='seg_diff_layer.mdla',
                         help='Path to the Segmentation mdla file')
-    parser.add_argument('--dla-detect-path', type=str, default='det_seg_trans_augment.mdla',
+    parser.add_argument('--dla-detect-path', type=str, default='det_seg_trans_aug_v2.mdla',
                         help='Path to the Detection mdla file')
     parser.add_argument('--image-path', type=str, default='bound_test.JPG',
                         help='Path to the input image')

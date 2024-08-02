@@ -98,8 +98,8 @@ def main(mdla_path_bound, mdla_path_segment, mdla_path_detect, image_path):
     
 
     # bound_img = cv2.cvtColor(bound_img, cv2.COLOR_RGB2BGR)
-    cv2.imshow("result", bound_img_resized)
-    cv2.waitKey(1000)
+    # cv2.imshow("result", bound_img_resized)
+    # cv2.waitKey(1000)
  
 
 
@@ -147,7 +147,7 @@ if __name__ == "__main__":
                         help='Path to the Bound mdla file')
     parser.add_argument('--dla-segment-path', type=str, default='seg_diff_layer.mdla',
                         help='Path to the Segmentation mdla file')
-    parser.add_argument('--dla-detect-path', type=str, default='det_seg_trans_augment.mdla',
+    parser.add_argument('--dla-detect-path', type=str, default='det_seg_trans_aug_v2.mdla',
                         help='Path to the Detection mdla file')
     parser.add_argument('--image-path', type=str, default='bound_test.JPG',
                         help='Path to the input image')

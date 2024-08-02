@@ -303,7 +303,12 @@ class Bound(NeuronContext):
         y = (int(y) if int(y) > 0 else 0)
         w = (int(w) if int(w) > 0 else 0)
         h = (int(h) if int(h) > 0 else 0)
- 
+        
+        mask = np.zeros((128, 128), dtype=np.uint8)
+        cv2.rectangle(mask, (x, y), (x+w, y+h), 255, -1)
+        result = cv2.bitwise_and(bgr_img, bgr_img, mask=mask)
+        
+        
         cropped_image =bgr_img[y:y+h, x:x+w]
         # print(cropped_image.shape)
         # cv2.imshow("result", bgr_img)

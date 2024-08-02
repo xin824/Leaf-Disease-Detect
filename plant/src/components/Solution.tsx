@@ -22,9 +22,7 @@ function Solution() {
         <div className="d-flex justify-content-center align-items-center">
         <div className="collapse col-md-8" id="collapseExample">
             <div className="card card-font text-center p-4 px-5">
-                Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
-                Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
-                Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
+                Buy a new plant.
             </div>
         </div>
         </div>
