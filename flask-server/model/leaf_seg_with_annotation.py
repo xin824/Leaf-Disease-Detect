@@ -10,7 +10,7 @@ import time
 import os
 
 def overlay_mask_on_image(mask, original_image, color=[0, 255, 0], alpha=0.3):
-    print(color)
+    # print(color)
     green_mask = np.zeros((128, 128, 3), dtype=np.uint8)
     green_mask[:, :, 0] = color[0]
     green_mask[:, :, 1] = color[1]
@@ -20,7 +20,7 @@ def overlay_mask_on_image(mask, original_image, color=[0, 255, 0], alpha=0.3):
     other_mask = np.broadcast_to(mask == 1, original_image.shape)
     green_mask[other_mask] = 255
     
-    print("putting the layers on")
+    # print("putting the layers on")
     try:
         # Attempt to blend the images using cv2.addWeighted
         blended_image = cv2.addWeighted(original_image, 1 - alpha, green_mask, alpha, 0)
@@ -32,8 +32,10 @@ def overlay_mask_on_image(mask, original_image, color=[0, 255, 0], alpha=0.3):
     
 
 def main(mdla_path_bound, mdla_path_segment, mdla_path_detect, image_path, save_path):
-
+    
+    
     start_time = time.time()
+    print("Start Segmentation time: 0ms")
 
     '''Segmentation'''
 
@@ -59,12 +61,18 @@ def main(mdla_path_bound, mdla_path_segment, mdla_path_detect, image_path, save_
 
     # Set input buffer for inference
     segment.SetInputBuffer(input_array, 0)
-
+    
+    seg_model_start = time.time()
+    print("Start Seg model: " + str(seg_model_start - start_time) + "ms")
+    
     # Execute model
     ret = segment.Execute()
     if ret != True:
         print("Failed to Execute")
         return
+    
+    seg_model_end = time.time()
+    print("End Seg model: " + str(seg_model_end - start_time) + "ms")
     
     image = segment.GetOutputBuffer(0)
     need = segment.create_mask(image)
@@ -74,7 +82,12 @@ def main(mdla_path_bound, mdla_path_segment, mdla_path_detect, image_path, save_
     
     segment_img = segment.postprocess(wants[0])
     
-    #color = (255, 0, 0
+    
+    
+    
+    seg_total = time.time()
+    
+    print("Segmentation spended time: " + str(seg_total - start_time) + "ms")
 
     
     '''Draw Leaf Bounding Box'''
@@ -82,17 +95,14 @@ def main(mdla_path_bound, mdla_path_segment, mdla_path_detect, image_path, save_
     bound = Bound(mdla_path=mdla_path_bound)
 
     # Initialize model
+    
+    bound_start = time.time()
+    print("Start Bound time: " + str(bound_start - start_time) + "ms")
     ret = bound.Initialize()
     if ret != True:
         print("Failed to initialize model")
         return
     
-    # print(segment_img.shape)
-    # Load input image
-    # image_pil = Image.fromarray(cv2.cvtColor(segment_img, cv2.COLOR_BGR2RGB))
-
-    # 使用 PIL 调整图像大小
-    # image = image_pil.resize((128, 128), Image.LANCZOS)
 
     dtype = np.float32
     segment_img = np.array(segment_img, dtype=dtype)
@@ -100,28 +110,35 @@ def main(mdla_path_bound, mdla_path_segment, mdla_path_detect, image_path, save_
     # Set input buffer for inference
     bound.SetInputBuffer(input_array, 0)
     # Execute model
+    bound_mod_start = time.time()
+    print("Bound model start: " + str(bound_mod_start - start_time) + "ms")
     ret = bound.Execute()
     if ret != True:
         print("Failed to Execute")
         return
+    bound_mod_end = time.time()
+    print("Bound model end: " + str(bound_mod_end - start_time) + "ms")
     
     segment_img = (segment_img * 255).astype(np.uint8)
     # segment_img = (segment_img * 255)
     image_pil = Image.fromarray(segment_img)
     segment_img = image_pil.resize((128, 128), Image.LANCZOS)
-    print("before bound")
     bound_img = bound.postprocess(segment_img)
 
-    # print(type(bound_img))
     bound_img = cv2.resize(bound_img, (128, 128), interpolation=cv2.INTER_LANCZOS4)
     bound_img_resized = cv2.cvtColor(bound_img, cv2.COLOR_BGR2RGB)
     
-
-
+    bound_total = time.time()
+    print("Finish Bound time: " + str(bound_total - start_time) + "ms")
+    
+    print("Bound spended time: " + str(bound_total - bound_start) + "ms")
  
 
 
     '''Detect Leaf Disease'''
+    detect_start = time.time()
+    print("Start detect time: " + str(detect_start - start_time) + "ms")
+    
     detect = Detect(mdla_path=mdla_path_detect)
 
     # Initialize model
@@ -130,47 +147,61 @@ def main(mdla_path_bound, mdla_path_segment, mdla_path_detect, image_path, save_
         print("Failed to initialize model")
         return
     
-    print(bound_img_resized.shape)
+    # print(bound_img_resized.shape)
     
     # Preprocess input image
     input_array = detect.img_preprocess(bound_img_resized)
-    print(input_array.shape)
+    # print(input_array.shape)
     # Set input buffer for inference
     detect.SetInputBuffer(input_array, 0)
-
+    
+    detect_mod_start = time.time()
+    print("Detect model start: " + str(detect_mod_start - start_time) + "ms")
     # Execute model
     ret = detect.Execute()
     if ret != True:
         print("Failed to Execute")
         return
+        
+    detect_mod_end = time.time()
+    print("Detect model end: " + str(detect_mod_end - start_time) + "ms")
     
     output_array = []
 
     # Postprocess output
     class_names = ['blight','citrus' ,'healthy', 'measles', 'mildew', 'mite', 'mold', 'rot', 'rust', 'scab', 'scorch', 'spot', 'virus']
-    print(detect.GetOutputBuffer(0))
+    # print(detect.GetOutputBuffer(0))
     print(class_names[np.argmax(detect.GetOutputBuffer(0))])
     # detect.postprocess(image)
 
     disease = class_names[np.argmax(detect.GetOutputBuffer(0))]
+    
+    detect_total = time.time()
+    print("Finish Detect time: " + str(detect_total - start_time) + "ms")
+    
+    print("Detection spended time: " + str(detect_total - detect_start) + "ms")
+    
     end_time = time.time()
     total_time = end_time - start_time
-    print(str(total_time) + 's')
+    print("Total time: " + str(total_time) + 'ms')
     
     color = (255, 0, 0)
     if(disease == "healthy"):
         color = (0,255, 0)
-    print("Before adding fancy mask")
+        
+    fancy_time = time.time()
+    print("Before adding fancy mask: " + str(fancy_time - start_time) + "ms")
 
-    print("Finished segmenting")
+    # print("Finished segmenting")
 
     segment_img_with_overlay = overlay_mask_on_image(need, original_image, color)
     annotated_image = bound.draw_bbox_on_image(segment_img_with_overlay, color)
     annotated_image = bound.add_disease_label(annotated_image, disease, 0.9, color)
     
-
+    fancy_time_end = time.time()
+    print("Finish adding fancy mask: " + str(fancy_time_end - start_time) + "ms")
     
-    print("Finish annotation")
+    # print("Finish annotation")
     # print(type(bound_img))
 
     # print(type(image_pil))
@@ -186,11 +217,11 @@ def main(mdla_path_bound, mdla_path_segment, mdla_path_detect, image_path, save_
     # cv2.imshow("result", annotated_image)
     # cv2.waitKey(1000)
     # cv2.imwrite("annotation.jpg", annotated_image)
-    #sv_path = os.path.dirname(image_path)
+    # sv_path = os.path.dirname(image_path)
     sv_path = save_path
-    print("SV PATH: " + sv_path)
+    # print("SV PATH: " + sv_path)
     image = Image.fromarray(annotated_image)
-    print("image:" + image_path)
+    # print("image:" + image_path)
 
 
     #sv_path += "/annotation.jpg"

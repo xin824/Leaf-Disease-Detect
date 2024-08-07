@@ -43,7 +43,7 @@ const DetailPage: React.FC<DetailPageProps> = ({ plants, updateCallback, wifiIp}
             </div>
             
             <PlantCard plant={plant} updateCallback={onUpdate} wifiIp = {wifiIp}></PlantCard>
-            <Solution></Solution>
+            <Solution plant={plant}></Solution>
         </div>
     </div>
   );

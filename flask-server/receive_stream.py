@@ -139,7 +139,7 @@ async def handle_connection(websocket, path):
                             
                         ''' run the model with the new image '''
                         os.chdir('./model')
-                        result = subprocess.run(['python3', './leaf_seg_with_annotation.py', '--image-path','../'+file_path_new, '--save-path','../'+save_path_new], capture_output=True, text=True)
+                        result = subprocess.run(['python3', './bound_seg_detect.py', '--image-path', '../'+file_path_new, '--save-path','../'+save_path_new], capture_output=True, text=True)
                         os.chdir('../')
                         
                         if(os.path.exists(save_path_new)):
