@@ -29,11 +29,9 @@ image = Image.new('P', (width, height))
 
 draw = ImageDraw.Draw(image)
 
-font = ImageFont.truetype(fonts.AmaticSCBold, 10)
+font = ImageFont.truetype(fonts.AmaticSCBold, 20)
 
 text = get_hostname()
-
-
 w, h = font.getsize(text)
 
 x = (width - w) // 2

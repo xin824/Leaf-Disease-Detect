@@ -127,7 +127,8 @@ async def handle_connection(websocket, path):
                         
                         file_path_new = os.path.join(image_directory, ip_address, f"new.jpg")
                         save_path_new = os.path.join(image_directory, ip_address, f"annotation.jpg")
-                        
+                        print("file path new: " + file_path_new)
+                        print("save path new: " + save_path_new)
                         if os.path.exists(save_path_new):
                             os.remove(save_path_new)
                             print(f"File '{save_path_new}' has been deleted.")
@@ -139,7 +140,7 @@ async def handle_connection(websocket, path):
                             
                         ''' run the model with the new image '''
                         os.chdir('./model')
-                        result = subprocess.run(['python3', './bound_seg_detect.py', '--image-path', '../'+file_path_new, '--save-path','../'+save_path_new], capture_output=True, text=True)
+                        result = subprocess.run(['python3', './module.py', '--image-path', '../'+file_path_new, '--save-path','../'+save_path_new], capture_output=True, text=True)
                         os.chdir('../')
                         
                         if(os.path.exists(save_path_new)):
@@ -148,7 +149,7 @@ async def handle_connection(websocket, path):
                         else:
                             image = Image.open(file_path_new)
                         
-                        image = image.resize((128*3, 128*3), Image.LANCZOS)
+                        image = image.resize((384, 288), Image.LANCZOS)
                         
                         file_path = ""
                         

@@ -6,19 +6,7 @@ import cv2
 import time
 
 class Segment(NeuronContext):
-    """
-    Class YOLOv8:
-    This class is used to perform object detection using the YOLOv8 model.
 
-    Parameters
-    ----------
-    dla_path : str, optional
-        Path to the YOLOv8 model, by default "None"
-    confidence_thres : float, optional
-        Confidence threshold for object detection, by default 0.5
-    iou_thres : float, optional
-        IOU threshold for object detection, by default 0.5
-    """
     def __init__(self, mdla_path: str = "None"):
         super().__init__(mdla_path)
         """
