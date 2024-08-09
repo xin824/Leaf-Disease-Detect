@@ -29,8 +29,9 @@ def detect_process(mdla_path_detect, img_resized):
     for bound_img in img_resized:
 
         input_array = detect.img_preprocess(bound_img)
-        # cv2.imshow("bound_img" , bound_img)
-        # cv2.waitKey(2000)
+        
+        cv2.imshow("bound_img" , bound_img)
+        cv2.waitKey(2000)
         # Set input buffer for inference
         detect.SetInputBuffer(input_array, 0)
         
@@ -48,11 +49,14 @@ def detect_process(mdla_path_detect, img_resized):
         
         disease = class_names[np.argmax(detect.GetOutputBuffer(0))]
     
-    final_disease = ""
+    final_disease = "No leaf"
+    if len(output_array) > 0:
+        final_disease = "healthy"
+    print(output_array)
     for i in output_array:
         if(i != "healthy"):
             final_disease = i
     # print(final_disease)
     
     
-    return output_array 
+    return output_array, final_disease

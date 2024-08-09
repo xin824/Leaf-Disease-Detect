@@ -23,6 +23,7 @@ def segment_process(mdla_path_segment, img_resized):
     # Check if the picture has 4 channels
     # bound_img_resized = Image.fromarray(cv2.cvtColor(bound_img_resized, cv2.COLOR_BGR2RGB))
     # print("Start segmenting " + str(len(img_resized)) + " images.")
+    print("img resized size: " + str(len(img_resized)))
     for bound_img in img_resized:
 
         input_array = segment.img_preprocess(bound_img)
@@ -48,7 +49,7 @@ def segment_process(mdla_path_segment, img_resized):
         # cv2.imshow("segment_img" , wants[0])
         # cv2.waitKey(2000)
         img_segmented.append(wants[0])
-
+    print("img segmented size: " + str(len(img_segmented)))
     return img_segmented
 
 

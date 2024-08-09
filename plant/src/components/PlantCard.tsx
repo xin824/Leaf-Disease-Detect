@@ -45,13 +45,13 @@ function PlantCard({ plant, updateCallback, wifiIp}: PlantCardProps) {
 
 
     useInterval(() => {
-    	if(key + 0.25 < 60){
-    	  setKey(key + 0.25);
+    	if(key + 0.5 < 60){
+    	  setKey(key + 0.5);
     	}else{
     	  setKey(0.0);
     	}
 	  
-	}, 250);
+	}, 500);
 	console.log(key)
     //console.log(new Date())
     //console.log("key: ", `./image/${plant?.ip}/${key.toFixed(1)}.jpg`)

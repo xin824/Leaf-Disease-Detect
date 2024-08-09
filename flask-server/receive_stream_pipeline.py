@@ -17,7 +17,7 @@ Clients= set()
 device_id_directory = 'device_ip.txt'
 image_directory = "../plant/build/image"
 image_directory2 = "../plant/public/image"
-time_thre = 0.25
+time_thre = 0.5
 if not os.path.exists(image_directory):
     os.makedirs(image_directory)
     
@@ -95,17 +95,17 @@ async def handle_disconnect(ip_address):
     
     path = os.path.join(image_directory, ip_address)
     await dir_check(path)
-    for i in range(60 / time_thre):
+    for i in range(int(60 / time_thre)):
         file_path = os.path.join(image_directory, ip_address, f"{str(('%.2f'%(float(i) * time_thre)))}.jpg")
-        image.save(file_path)
+        # image.save(file_path)
         print(f"Saved image: {file_path}")
         
     path = os.path.join(image_directory2, ip_address)
     await dir_check(path)
-    for i in range(60 / time_thre):
+    for i in range(int(60 / time_thre)):
     
         file_path = os.path.join(image_directory2, ip_address, f"{str(('%.2f'%(float(i) * time_thre)))}.jpg")
-        image.save(file_path)
+        # image.save(file_path)
         
     with app.app_context():
         control.set_plant_disconnect(ip_address)
@@ -183,25 +183,26 @@ async def handle_connection(websocket, path):
                         ''' run the model with the new image '''
                         #os.chdir('./model')
                         #result = subprocess.run(['python3', './module.py', '--image-path', '../'+file_path_new, '--save-path','../'+save_path_new], capture_output=True, text=True)
-                        result = run_process('./model/yolo640leafdetect.mdla', './model/notbad_office_finetune.mdla', './model/det_seg_trans.mdla', file_path_new, 'import_test.jpg')
-                        # print(result)
+                        result = run_process('./model/yolo640leafdetect.mdla', './model/notbad_office_finetune.mdla', './model/det_seg_trans_aug_v2.mdla', file_path_new, save_path_new)
+                        print("result info: ")
+                        print(result)
+                        print(type(result))
                         #os.chdir('../')
                         
                         if(os.path.exists(save_path_new)):
                             print("Found a saved image: " + save_path_new)
-                            await save_image(save_path_new, ip_address)
-                        '''
-                        if result.stdout:
+                            now = await save_image(save_path_new, ip_address, now)
                         
-                            state = read_model_result(result.stdout)
-                            print(result.stdout)
-                            print(f"Device: {ip_address} detect result: {state}")
-                            if(state):
-                                with app.app_context():
-                                    updated_plant = control.update_plant_ip(ip_address, state, current_time.strftime('%Y/%m/%d %H:%M:%S'))
+                        
+                        if result != "":
+                        
+                            print(result)
+                            # print(f"Device: {ip_address} detect result: {state}")
+                            with app.app_context():
+                                updated_plant = control.update_plant_ip(ip_address, result, current_time.strftime('%Y/%m/%d %H:%M:%S'))
                         else:
-                            print(f"pic not found: {file_path}")
-                        '''
+                            print(f"pic not found: {file_path_new}")
+                        
                         last_saved_time = current_time
         except websockets.exceptions.ConnectionClosed:
             ip_address = websocket.remote_address[0]

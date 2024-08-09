@@ -4,6 +4,7 @@ from .transforma_detect import Detect
 from NeuronRuntimeHelper import NeuronContext
 from PIL import Image
 import argparse
+import uuid
 import numpy as np
 import math
 import cv2
@@ -47,15 +48,22 @@ def bound_process(mdla_path_bound, image):
         return
     bound_output = bound.GetOutputBuffer(0)
     bound_imgs = bound.postprocess(back_img)
+    save_dir = './disease'
     img_resized = []
     try:
         for bound_img in bound_imgs:
             try:
                 bound_img_resized = cv2.resize(bound_img, (128, 128), interpolation=cv2.INTER_LANCZOS4)
+                unique_filename = f"yolo_{uuid.uuid4()}.jpg"
+                save_path = os.path.join(save_dir, unique_filename)
+                cv2.imwrite(save_path, bound_img_resized)
+                # print("save path: " + save_path)
+                # print("SV PATH: " + sv_path)
                 img_resized.append(bound_img_resized)
             except:
                 print("No leaf")    
     except:
         print("No pic yet.")
+    
     return img_resized, bound_output, back_img
   

@@ -35,7 +35,7 @@ def main(mdla_path_bound, mdla_path_segment, mdla_path_detect, image_path, save_
     # print("Start Segment time: " + str(segment_time - start_time) + "ms")
     
     # Wait unitl segmentation model done.
-    # img_segmented = segment_process(mdla_path_segment, img_resized)
+    img_segmented = segment_process(mdla_path_segment, img_resized)
     
     end_segment_time = time.time()
     # print("End Segment time: " + str(end_segment_time - start_time) + "ms")
@@ -44,7 +44,7 @@ def main(mdla_path_bound, mdla_path_segment, mdla_path_detect, image_path, save_
     detect_start = time.time()
     # print("Start detect time: " + str(detect_start - start_time) + "ms")
     
-    output_array = detect_process(mdla_path_detect, img_resized)
+    output_array, final_disease = detect_process(mdla_path_detect, img_segmented)
     
     detect_total = time.time()
     # print("Finish Detect time: " + str(detect_total - start_time) + "ms")
@@ -59,11 +59,11 @@ def main(mdla_path_bound, mdla_path_segment, mdla_path_detect, image_path, save_
     fancy_time = time.time()
     # print("Before adding fancy mask: " + str(fancy_time - start_time) + "ms")
 
-    annotation_process(save_path, output_array, bound_output, original_image)
+    # annotation_process(save_path, output_array, bound_output, original_image)
     
     fancy_time_end = time.time()
     print("Finish adding fancy mask: " + str(fancy_time_end - start_time) + "ms")
-    return output_array
+    return final_disease
 
 
 
@@ -71,7 +71,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Test Detect model with NeuronHelper')
     parser.add_argument('--dla-bound-path', type=str, default='yolo640leafdetect.mdla',
                         help='Path to the Bound mdla file')
-    parser.add_argument('--dla-segment-path', type=str, default='office_random_finetune.mdla',
+    parser.add_argument('--dla-segment-path', type=str, default='for_yolo_seg.mdla',
                         help='Path to the Segmentation mdla file')
     parser.add_argument('--dla-detect-path', type=str, default='det_seg_trans.mdla',
                         help='Path to the Detection mdla file')

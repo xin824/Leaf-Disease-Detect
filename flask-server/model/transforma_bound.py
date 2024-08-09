@@ -302,6 +302,7 @@ class Bound(NeuronContext):
         
         crop_images = []
         
+        
         for i in indices:
             x, y, w, h = boxes[i]
             x = (int(x) if int(x) > 0 else 0)
@@ -317,7 +318,7 @@ class Bound(NeuronContext):
             # new_img = bgr_img
             # result = cv2.bitwise_and(new_img, new_img, mask=mask)
     
-            crop_images = []
+            
             
             cropped_image = bgr_img[y:y+h, x:x+w]
             if(w != h):
@@ -327,18 +328,13 @@ class Bound(NeuronContext):
                     cropped_image = self.resize_and_pad(cropped_image, h)
             
             if(w * h < (img_h * img_w / 49)):
-                # print("img_h: " + str(img_h) + ", img_w: " + str(img_w))
-                # print("w: " + str(w) + ", h: " + str(h))
-                print('Detect too small leaf')
+                print("Detect too small leaf")
             else:
-                # cv2.imshow("cropped_image", cropped_image)
-                # cv2.waitKey(2000)
                 crop_images.append(cropped_image)
         
             # result = bgr_img
         
         
-            print("crop image size: " + str(len(crop_images)))
         
         # cv2.imshow("cropped_image", cropped_image)
         # cv2.waitKey(3000)

@@ -75,8 +75,8 @@ def draw_bbox_on_image(output_image, output_array, bound_output):
         )
         
         if len(indices) == 0:
+            print("No indices candidate.")
             return None
-        
         cur = 0
         
         for i in indices:
@@ -98,11 +98,26 @@ def draw_bbox_on_image(output_image, output_array, bound_output):
 def annotation_process(save_path, output_array, bound_output, original_image):
     
     try:
+        
         original_image = original_image.resize((128 * 3, 128 * 3))
         # segment_img_with_overlay = overlay_mask_on_image(need, original_image, color)
         original_image = cv2.cvtColor(np.array(original_image), cv2.COLOR_RGB2BGR)
+        
         annotated_image = draw_bbox_on_image(original_image, output_array, bound_output)
+        
         # annotated_image = bound.add_disease_label(annotated_image, disease, 0.9, color)
+        
+        
+    except:
+        print("No image")
+    
+    
+    
+    # Postprocess output
+    # print("output_array: ")
+    # print(output_array)
+    
+    try:
         annotated_image = annotated_image[48:336, 0:384]
         annotated_image = cv2.cvtColor(annotated_image, cv2.COLOR_BGR2RGB)
     
@@ -115,17 +130,8 @@ def annotation_process(save_path, output_array, bound_output, original_image):
         image.save(save_path, "JPEG")
         # cv2.imshow("Real", annotated_image)
         # cv2.waitKey(3000)
-        
     except:
-        print("No image")
-    
-    
-    
-    # Postprocess output
-    # print("output_array: ")
-    # print(output_array)
-    
-
+        print("Annotation failed")
 
     # 使用 PIL 调整图像大小
     
