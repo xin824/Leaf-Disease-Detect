@@ -5,6 +5,7 @@ from PIL import Image, UnidentifiedImageError
 import os
 from datetime import datetime
 import control
+import math
 from config import app
 import subprocess
 import signal
@@ -13,6 +14,7 @@ Clients= set()
 device_id_directory = 'device_ip.txt'
 image_directory = "../plant/build/image"
 image_directory2 = "../plant/public/image"
+time_thre = 0.5
 if not os.path.exists(image_directory):
     os.makedirs(image_directory)
     
@@ -56,22 +58,48 @@ async def dir_check(path):
         os.makedirs(path)
         print('add new folder: ', path)
 
+async def write_image(file_path_new, m):
+    with open(file_path_new, "wb") as f:
+        f.write(m)
+
+async def save_image(file_path_new, ip_address, now):
+    image = Image.open(file_path_new)
+    image = image.resize((384, 288), Image.LANCZOS)
+    file_path = ""
+    #off = time_thre if (now.microsecond / 1000000 > time_thre) else 0
+    delay = 1.5
+    
+    sst = float(((now - 60.0) if now >= (60.0 - delay ) else now) + delay)
+    file_path = os.path.join(image_directory, ip_address, f"{str(round(sst, 1))}.jpg")
+    image.save(file_path)
+    print(f"Saved image: {file_path}")
+    
+    while(datetime.now().second - now > (delay - 0.5)):
+        now = (now + time_thre) if (now + time_thre) < 60.0 else (now + time_thre - 60.0)
+        sst = float(((now - 60.0) if now >= (60.0 - delay ) else now) + delay)
+        file_path = os.path.join(image_directory, ip_address, f"{str(round(sst, 1))}.jpg")
+        image.save(file_path)
+        print(f"copy image: {file_path}")
+        
+    return now
+
 async def handle_disconnect(ip_address):
     file_path_new = os.path.join(image_directory, ip_address, f"new.jpg")
     image = Image.open(file_path_new)
-    image = image.resize((128*3, 128*3), Image.LANCZOS)
+    image = image.resize((384, 288), Image.LANCZOS)
     
     path = os.path.join(image_directory, ip_address)
     await dir_check(path)
-    for i in range(60):
-        file_path = os.path.join(image_directory, ip_address, f"{i}.jpg")
+    for i in range(120):
+        file_path = os.path.join(image_directory, ip_address, f"{round(float(i)/2.0, 1)}.jpg")
         image.save(file_path)
+        print(f"Saved image: {file_path}")
         
     path = os.path.join(image_directory2, ip_address)
     await dir_check(path)
-    for i in range(60):
+    for i in range(120):
     
-        file_path = os.path.join(image_directory2, ip_address, f"{i}.jpg")
+        file_path = os.path.join(image_directory2, ip_address, f"{round(float(i)/2.0, 1)}.jpg")
         image.save(file_path)
         
     with app.app_context():
@@ -111,19 +139,22 @@ async def handle_connection(websocket, path):
     folder_path = os.path.join(image_directory, ip_address)
     await dir_check(folder_path)
     
+    now = datetime.now().second
+    
     while True:
         try:
             message = await websocket.recv()
-            
-            
+
             ''' determine whether the message is a image '''
             if len(message) > 5000:
                 if is_valid_image(message):
+                
                     current_time = datetime.now()
                     time_diff = (current_time - last_saved_time).total_seconds()
-                    time_thre = 3
                     ''' save a image every five seconds '''
-                    if time_diff >= time_thre: 
+                    if time_diff >= time_thre:                        
+                        now = (now + time_thre) if (now + time_thre) < 60.0 else (now + time_thre - 60.0)
+                        #st = float(((now+off) if (now+off)<60 else (now+off-60)))
                         
                         file_path_new = os.path.join(image_directory, ip_address, f"new.jpg")
                         save_path_new = os.path.join(image_directory, ip_address, f"annotation.jpg")
@@ -135,30 +166,22 @@ async def handle_connection(websocket, path):
                         else:
                             print(f"File '{save_path_new}' does not exist.")
                         
-                        with open(file_path_new, "wb") as f:
-                            f.write(message)
+                        #with open(file_path_new, "wb") as f:
+                        #    f.write(message)
+                        
+                        await write_image(file_path_new, message)
+                        now = await save_image(file_path_new, ip_address, now)
                             
                         ''' run the model with the new image '''
-                        os.chdir('./model')
-                        result = subprocess.run(['python3', './module.py', '--image-path', '../'+file_path_new, '--save-path','../'+save_path_new], capture_output=True, text=True)
-                        os.chdir('../')
+                        #os.chdir('./model')
+                        #result = subprocess.run(['python3', './module.py', '--image-path', '../'+file_path_new, '--save-path','../'+save_path_new], capture_output=True, text=True)
+                    
+                        #os.chdir('../')
                         
                         if(os.path.exists(save_path_new)):
                             print("Found a saved image: " + save_path_new)
-                            image = Image.open(save_path_new)
-                        else:
-                            image = Image.open(file_path_new)
-                        
-                        image = image.resize((384, 288), Image.LANCZOS)
-                        
-                        file_path = ""
-                        
-                        for i in range(time_thre + 1):
-                            st = ((datetime.now().second+1+i) if (datetime.now().second+1+i)<60 else (datetime.now().second+1+i-60))
-                            file_path = os.path.join(image_directory, ip_address, f"{str(st)}.jpg")
-                            image.save(file_path)
-                            print(f"Saved image: {file_path}")
-                        
+                            await save_image(save_path_new, ip_address)
+                        '''
                         if result.stdout:
                         
                             state = read_model_result(result.stdout)
@@ -169,6 +192,7 @@ async def handle_connection(websocket, path):
                                     updated_plant = control.update_plant_ip(ip_address, state, current_time.strftime('%Y/%m/%d %H:%M:%S'))
                         else:
                             print(f"pic not found: {file_path}")
+                        '''
                         last_saved_time = current_time
         except websockets.exceptions.ConnectionClosed:
             ip_address = websocket.remote_address[0]

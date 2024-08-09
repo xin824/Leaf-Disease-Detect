@@ -1,6 +1,6 @@
-from transforma_bound import Bound
-from transforma_seg import Segment
-from transforma_detect import Detect
+from .transforma_bound import Bound
+from .transforma_seg import Segment
+from .transforma_detect import Detect
 from NeuronRuntimeHelper import NeuronContext
 from PIL import Image
 import argparse
@@ -27,9 +27,10 @@ def detect_process(mdla_path_detect, img_resized):
   
     
     for bound_img in img_resized:
+
         input_array = detect.img_preprocess(bound_img)
-        cv2.imshow("bound_img" , bound_img)
-        cv2.waitKey(2000)
+        # cv2.imshow("bound_img" , bound_img)
+        # cv2.waitKey(2000)
         # Set input buffer for inference
         detect.SetInputBuffer(input_array, 0)
         
@@ -42,9 +43,16 @@ def detect_process(mdla_path_detect, img_resized):
         
         
         # print(detect.GetOutputBuffer(0))
-        print(class_names[np.argmax(detect.GetOutputBuffer(0))])
+        # print(class_names[np.argmax(detect.GetOutputBuffer(0))])
         output_array.append(class_names[np.argmax(detect.GetOutputBuffer(0))])
-
-        disease = class_names[np.argmax(detect.GetOutputBuffer(0))]
         
+        disease = class_names[np.argmax(detect.GetOutputBuffer(0))]
+    
+    final_disease = ""
+    for i in output_array:
+        if(i != "healthy"):
+            final_disease = i
+    # print(final_disease)
+    
+    
     return output_array 

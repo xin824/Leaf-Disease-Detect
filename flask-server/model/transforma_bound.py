@@ -239,7 +239,7 @@ class Bound(NeuronContext):
         
         image_pil = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
         img_w, img_h = image_pil.size
-        print("img_w, img_h: " + str(img_w) + ", " + str(img_h))
+        # print("img_w, img_h: " + str(img_w) + ", " + str(img_h))
         back = Image.new("RGB", (side, side), "black")
         offset = ((side - img_w) // 2, (side - img_h) // 2)
         back.paste(image_pil, offset)
@@ -311,13 +311,13 @@ class Bound(NeuronContext):
             boxes[i] = x, y, w, h
             # self.draw_boxes(bgr_img, boxes[i], scores[i], class_ids[i])
             
-            print("x: " + str(x) + ", y: " + str(y) + ", w: " + str(w) + ", h: " + str(h))
+            # print("x: " + str(x) + ", y: " + str(y) + ", w: " + str(w) + ", h: " + str(h))
             mask = np.zeros((img_w, img_h), dtype=np.uint8)
             cv2.rectangle(mask, (x, y), (x+w, y+h), 255, -1)
             # new_img = bgr_img
             # result = cv2.bitwise_and(new_img, new_img, mask=mask)
     
-            
+            crop_images = []
             
             cropped_image = bgr_img[y:y+h, x:x+w]
             if(w != h):
@@ -338,7 +338,7 @@ class Bound(NeuronContext):
             # result = bgr_img
         
         
-        
+            print("crop image size: " + str(len(crop_images)))
         
         # cv2.imshow("cropped_image", cropped_image)
         # cv2.waitKey(3000)

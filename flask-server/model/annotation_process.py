@@ -1,6 +1,6 @@
-from transforma_bound import Bound
-from transforma_seg import Segment
-from transforma_detect import Detect
+from .transforma_bound import Bound
+from .transforma_seg import Segment
+from .transforma_detect import Detect
 from NeuronRuntimeHelper import NeuronContext
 from PIL import Image
 import argparse
@@ -80,7 +80,7 @@ def draw_bbox_on_image(output_image, output_array, bound_output):
         cur = 0
         
         for i in indices:
-            x, y, w, h = boxes[i]
+            x, y, w, h = boxes[i] 
             x = (int(x) if int(x) > 0 else 0)
             y = (int(y) if int(y) > 0 else 0)
             w = (int(w) if int(w) > 0 else 0)
@@ -91,7 +91,7 @@ def draw_bbox_on_image(output_image, output_array, bound_output):
                 cur = cur + 1
                 color = (0, 0, 255)
                 if(disease == "healthy"):
-                    color = (0,255, 0)
+                    color = (0, 255, 0)
                 draw_boxes(output_image, boxes[i], scores[i], class_ids[i], color)
         return output_image
 
@@ -103,29 +103,31 @@ def annotation_process(save_path, output_array, bound_output, original_image):
         original_image = cv2.cvtColor(np.array(original_image), cv2.COLOR_RGB2BGR)
         annotated_image = draw_bbox_on_image(original_image, output_array, bound_output)
         # annotated_image = bound.add_disease_label(annotated_image, disease, 0.9, color)
+        annotated_image = annotated_image[48:336, 0:384]
+        annotated_image = cv2.cvtColor(annotated_image, cv2.COLOR_BGR2RGB)
+    
+        # print("SV PATH: " + sv_path)
+        image = Image.fromarray(annotated_image)
         
+        # print(save_path)
+        # print("image:" + image_path)
+
+        image.save(save_path, "JPEG")
         # cv2.imshow("Real", annotated_image)
         # cv2.waitKey(3000)
         
     except:
         print("No image")
-    annotated_image = annotated_image[48:336, 0:384]
+    
+    
     
     # Postprocess output
-    print("output_array: ")
-    print(output_array)
+    # print("output_array: ")
+    # print(output_array)
     
 
 
     # 使用 PIL 调整图像大小
     
     # save the annotated image to the provided path 
-    annotated_image = cv2.cvtColor(annotated_image, cv2.COLOR_BGR2RGB)
     
-    # print("SV PATH: " + sv_path)
-    image = Image.fromarray(annotated_image)
-    
-    print(save_path)
-    # print("image:" + image_path)
-
-    image.save(save_path, "JPEG")

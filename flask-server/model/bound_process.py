@@ -1,6 +1,6 @@
-from transforma_bound import Bound
-from transforma_seg import Segment
-from transforma_detect import Detect
+from .transforma_bound import Bound
+from .transforma_seg import Segment
+from .transforma_detect import Detect
 from NeuronRuntimeHelper import NeuronContext
 from PIL import Image
 import argparse
@@ -48,11 +48,14 @@ def bound_process(mdla_path_bound, image):
     bound_output = bound.GetOutputBuffer(0)
     bound_imgs = bound.postprocess(back_img)
     img_resized = []
-    for bound_img in bound_imgs:
-        try:
-            bound_img_resized = cv2.resize(bound_img, (128, 128), interpolation=cv2.INTER_LANCZOS4)
-            img_resized.append(bound_img_resized)
-        except:
-            print("No leaf")    
+    try:
+        for bound_img in bound_imgs:
+            try:
+                bound_img_resized = cv2.resize(bound_img, (128, 128), interpolation=cv2.INTER_LANCZOS4)
+                img_resized.append(bound_img_resized)
+            except:
+                print("No leaf")    
+    except:
+        print("No pic yet.")
     return img_resized, bound_output, back_img
   

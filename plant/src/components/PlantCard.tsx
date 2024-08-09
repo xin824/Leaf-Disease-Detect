@@ -1,6 +1,6 @@
 import './PlantCard.css'
 import EditBox from './EditBox';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 interface Plant {
     id: number;
@@ -16,26 +16,47 @@ interface Plant {
     updateCallback: () => void;
     wifiIp: string;
   }
+  
+function useInterval(callback: () => void, delay: number|null) {
+  const savedCallback = useRef<() => void>();
+
+  // Remember the latest callback.
+  useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  // Set up the interval.
+  useEffect(() => {
+    if(delay !== null) {
+	    let id = setInterval(() => {
+		if(savedCallback.current) {
+	      	savedCallback.current();
+	      	}
+	    }, delay);
+	    return () => clearInterval(id);
+	    }
+	  }, [delay]);
+   }
 
 function PlantCard({ plant, updateCallback, wifiIp}: PlantCardProps) {
     const [progressValue, setProgressValue] = useState(0);
     const [updateTime, setUpdateTime] = useState('Refresh to load last updated time');
-    const [key, setKey] = useState(new Date());
+    const [key, setKey] = useState(new Date().getSeconds());
 
-    useEffect(() => {
-        //if(plant)
-        //    setProgressValue(parseInt(plant.update_time));
-        var interval = setInterval(() => tick(), 1000);
-	
-	return () => clearInterval(interval);
-    }, []);
+
+    useInterval(() => {
+    	if(key + 0.25 < 60){
+    	  setKey(key + 0.25);
+    	}else{
+    	  setKey(0.0);
+    	}
+	  
+	}, 250);
+	console.log(key)
+    //console.log(new Date())
+    //console.log("key: ", `./image/${plant?.ip}/${key.toFixed(1)}.jpg`)
     
-    function tick(){
-        setKey(new Date());
-        console.log(new Date().getSeconds().toString());
-    }
-
-    async function fetchImageLastModified(imageName: string): Promise<string | null> {
+    /**async function fetchImageLastModified(imageName: string): Promise<string | null> {
         try {
             const response = await fetch(`${wifiIp}/update_time/${encodeURIComponent(imageName)}`);
             if (response.ok) {
@@ -49,18 +70,7 @@ function PlantCard({ plant, updateCallback, wifiIp}: PlantCardProps) {
             return null;
         }
     }
-
-    // Example usage
-    const imageName = `${plant?.ip}.jpg`; // Replace with your image path
-    fetchImageLastModified(imageName)
-        .then(lastModified => {
-            if (lastModified) {
-                // console.log('Image last modified:', lastModified);
-                setUpdateTime(lastModified);
-            } else {
-                console.log('Image last modified not available');
-            }
-        });
+    **/
 
   return (
     // <div className="container-fluid" style={{backgroundColor: "#405F43", height: '100vh'}}>
@@ -68,8 +78,9 @@ function PlantCard({ plant, updateCallback, wifiIp}: PlantCardProps) {
             <div className="card m-5 p-md-4 p-5">
                 <div className="row g-0">
                     <div className="col-md-4 d-flex justify-content-center align-items-center">
-                        <img src={`./image/${plant?.ip}/${new Date().getSeconds().toString()}.jpg`} className="img-fluid plantPicture" alt="plant picture"/>
+                        {/* <img src={`./image/${plant?.ip}/${(new Date().getSeconds() + ((new Date().getMilliseconds() > 500)?0.5:0)).toFixed(1).toString()}.jpg`} className="img-fluid plantPicture" alt="plant picture"/>*/}
                         {/* <img src={`../../image/${plant?.ip}.jpg`} className="img-fluid plantPicture" alt="plant picture"/> */}
+                        <img src={`./image/${plant?.ip}/${key.toFixed(2)}.jpg`} className="img-fluid plantPicture" alt="plant picture"/>
                     </div>
                     <div className="col-md-8 p-2">
                         <div className="card-body">
