@@ -6,33 +6,9 @@ import cv2
 import time
 
 class Detect(NeuronContext):
-    """
-    Class YOLOv8:
-    This class is used to perform object detection using the YOLOv8 model.
 
-    Parameters
-    ----------
-    dla_path : str, optional
-        Path to the YOLOv8 model, by default "None"
-    confidence_thres : float, optional
-        Confidence threshold for object detection, by default 0.5
-    iou_thres : float, optional
-        IOU threshold for object detection, by default 0.5
-    """
     def __init__(self, mdla_path: str = "None"):
         super().__init__(mdla_path)
-        """
-        Initializes the YOLOv8 class.
-
-        Parameters
-        ----------
-        dla_path : str
-            Path to the YOLOv8 model
-        confidence_thres : float
-            Confidence threshold for object detection
-        iou_thres : float
-            IOU threshold for object detection
-        """
 
     def img_preprocess(self, image):
 
@@ -46,40 +22,14 @@ class Detect(NeuronContext):
         return dst_img
 
     def postprocess(self, image):
-        """
-        Post-processing function for YOLOv8 model
 
-        Parameters
-        ----------
-        image : PIL.Image
-            Input image to be processed
-
-        Returns
-        -------
-        None
-            Function will display the result image using OpenCV
-        """
         img_w, img_h = image.size
         image = np.array(image)
         bgr_img = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-        # Initilize lists to store bounding box coordinates, scores and class_ids
 
-        # cv2.imshow("result", bgr_img)
-        
 
 def main(mdla_path, image_path):
-    """Main function to test YOLOv8 model using NeuronHelper
 
-    This function tests the YOLOv8 model using NeuronHelper by:
-    1. Initializing the model
-    2. Loading input image
-    3. Preprocessing input image
-    4. Setting input buffer for inference
-    5. Executing model
-    6. Postprocessing output
-    7. Showing result for 3 seconds
-    8. Cleaning up windows
-    """
     start_time = time.time()
     model = Detect(mdla_path=mdla_path)
 

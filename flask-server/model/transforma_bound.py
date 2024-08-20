@@ -9,19 +9,6 @@ import time
 from multiprocessing import Pool, cpu_count
 
 class Bound(NeuronContext):
-    """
-    Class YOLOv8:
-    This class is used to perform object detection using the YOLOv8 model.
-
-    Parameters
-    ----------
-    dla_path : str, optional
-        Path to the YOLOv8 model, by default "None"
-    confidence_thres : float, optional
-        Confidence threshold for object detection, by default 0.5
-    iou_thres : float, optional
-        IOU threshold for object detection, by default 0.5
-    """
     def __init__(self, mdla_path: str = "None", confidence_thres=0.5, iou_thres=0.5):
         super().__init__(mdla_path)
         """
@@ -29,7 +16,7 @@ class Bound(NeuronContext):
 
         Parameters
         ----------
-        dla_path : str
+        mdla_path : str
             Path to the YOLOv8 model
         confidence_thres : float
             Confidence threshold for object detection
@@ -42,19 +29,7 @@ class Bound(NeuronContext):
         """IOU threshold for object detection"""
 
     def draw_boxes(self, image, box, score, class_id, color=(0, 255, 0)):
-        """Draws a bounding box on the image based on the detected class and confidence
 
-        Parameters
-        ----------
-        image : numpy.ndarray
-            Image to draw bounding box on
-        box : tuple
-            (x, y, width, height) of the bounding box
-        score : float
-            Confidence of the detected class
-        class_id : int
-            Class ID of detected object
-        """
         # Convert the box coordinates to integers
         x1, y1, w, h = [int(v) for v in box]
         # Set the color for the bounding box
@@ -79,19 +54,6 @@ class Bound(NeuronContext):
             color,
             cv2.FILLED,
         )
-        # Add the label text
-        # cv2.putText(
-        #     image,
-        #     label,
-        #     (int(label_x), int(label_y)),
-        #     cv2.FONT_HERSHEY_SIMPLEX,
-        #     0.5,  # font scale
-        #     (0, 0, 0),  # text color
-        #     1,  # line thickness
-        #     cv2.LINE_AA,
-        # )
-    
-        
 
     def img_preprocess(self, image):
 
@@ -104,7 +66,6 @@ class Bound(NeuronContext):
         return dst_img
     
     def add_disease_label(self, image, prediction, confidence, color):
-        # print("ADDing diseaes label")
         boxes = self.get_box()
         label_image = image.copy()
         for box in boxes:
@@ -116,19 +77,13 @@ class Bound(NeuronContext):
 
             # print("Using width and height")
             (text_width, text_height), baseline = cv2.getTextSize(label_text, font, font_scale, thickness)
-            # print("Got width and height")
-            # cv2.rectangle(label_image, (x+3, y), (x + text_width + 8, y + baseline + 10), (255, 255, 255), cv2.FILLED)
-            # print("Putting text")
-            # cv2.putText(label_image, label_text, (x + 5,y + 10), cv2.FONT_HERSHEY_TRIPLEX, 0.4, color, 1, 1)
         return label_image  
     
     def get_box(self):
         # print("CALLING")
         img_w = 128
         img_h = 128
-        # print("GEttting the prediction")
         output = self.GetOutputBuffer(0)
-        # print("GOt the prediction")
         # Initilize lists to store bounding box coordinates, scores and class_ids
 
         boxes = []
@@ -174,21 +129,14 @@ class Bound(NeuronContext):
         return final_boxes
         
     def draw_bbox_on_image(self, output_image, output_array):
-        # print("CALLING")
         img_w = 128 * 3
         img_h = 128 * 3
-        # print("GEttting the prediction")
         outputs = np.array((self.GetOutputBuffer(0)))
         
-        print("Get Output Buffer: " + str(time.time() - here))
-        # Initilize lists to store bounding box coordinates, scores and class_ids
-
-    
         boxes = []
         scores = []
         class_ids = []
 
-        # outputs = np.array([cv2.transpose(output_buf[0])])
         rows = outputs.shape[1]
         for i in range(rows):
             classes_scores = outputs[0][i][4:]
@@ -210,8 +158,6 @@ class Bound(NeuronContext):
         indices = cv2.dnn.NMSBoxes(
             boxes, scores, self.confidence_thres, self.iou_thres
         )
-        
-        
 
         if len(indices) == 0:
             return None
@@ -265,24 +211,17 @@ class Bound(NeuronContext):
         None
             Function will display the result image using OpenCV
         """
-        print("Bound postprocess function start: 0")
-        here = time.time()
         img_w, img_h = image.size
         image = np.array(image)
         bgr_img = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
         outputs = np.array((self.GetOutputBuffer(0)))
         outputs = cv2.transpose(outputs[0])
-        print(outputs.shape)
-        print("Get Output Buffer: " + str(time.time() - here))
         # Initilize lists to store bounding box coordinates, scores and class_ids
-
-    
         boxes = []
         scores = []
         class_ids = []
 
-        # outputs = np.array([cv2.transpose(output_buf[0])])
         rows = outputs.shape[0]
         for i in range(rows):
             classes_scores = outputs[i][4:]
@@ -297,19 +236,16 @@ class Bound(NeuronContext):
                 boxes.append(box)
                 scores.append(maxScore)
                 class_ids.append(maxClassIndex)
-        
-        print("Finish process box: " + str(time.time() - here))
+
 
         # Filter out low confidence bounding boxes using non-maximum suppression
         indices = cv2.dnn.NMSBoxes(
             boxes, scores, self.confidence_thres, self.iou_thres
         )
-
        
 
         if len(indices) == 0:
             return None
-        print("Filter out indices: " + str(time.time() - here))
         crop_images = []
         crop_boxes = []
         
@@ -320,15 +256,7 @@ class Bound(NeuronContext):
             y = (int(y) if int(y) > 0 else 0)
             w = (int(w) if int(w) > 0 else 0)
             h = (int(h) if int(h) > 0 else 0)
-            # self.draw_boxes(bgr_img, boxes[i], scores[i], class_ids[i])
-            
-            # print("x: " + str(x) + ", y: " + str(y) + ", w: " + str(w) + ", h: " + str(h))
-            # mask = np.zeros((img_w, img_h), dtype=np.uint8)
-            # cv2.rectangle(mask, (x, y), (x+w, y+h), 255, -1)
-            # new_img = bgr_img
-            # result = cv2.bitwise_and(new_img, new_img, mask=mask)
-     
-            
+
             cropped_image = bgr_img[y:y+h, x:x+w]
             if(w > h): 
                 cropped_image = self.resize_and_pad(cropped_image, w)
@@ -341,8 +269,6 @@ class Bound(NeuronContext):
                 crop_boxes.append([x, y , w, h])
                 crop_images.append(cropped_image)
         
-            # result = bgr_img
-        print("Get Crop images: " + str(time.time() - here))
         return crop_images, crop_boxes
 
 
