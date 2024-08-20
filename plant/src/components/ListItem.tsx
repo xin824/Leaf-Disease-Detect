@@ -95,7 +95,7 @@ function ListItem({ plant, updateCallback, wifiIp}: ListItemProps) {
                      aria-valuenow={parseInt(plant.update_time, 10)} aria-valuemin={0} aria-valuemax={100}
                      ref={progressRef}>
                     <div className="progress-bar"
-                         style={{ width: `50%`, backgroundColor: '#708F73' }}
+                         style={{ width: `${plant?.state.slice(0,3)}%`, backgroundColor: '#708F73' }}
                     ></div>
                 </div>
             </div> 

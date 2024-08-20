@@ -9,30 +9,24 @@ import cv2
 import time
 import os
 
-def detect_process(mdla_path_detect, img_resized):
-    
-    detect = Detect(mdla_path=mdla_path_detect)
+def detect_process(detect, img_resized, initial):
+    # detect = Detect(mdla_path=mdla_path_detect)
 
     # Initialize model
-    ret = detect.Initialize()
-    if ret != True:
-        print("Failed to initialize model")
-        return
+    if initial:
+        ret = detect.Initialize()
+        if ret != True:
+            print("Failed to initialize model")
+            return
 
-    # print(bound_img_resized.shape)
-    # Preprocess input image
     
     output_array = []
-    class_names = ['blight','citrus' ,'healthy', 'measles', 'mildew', 'mite', 'mold', 'rot', 'rust', 'scab', 'scorch', 'spot', 'virus']
-  
+    class_names = ['blight', 'citrus' ,'healthy', 'measles', 'mildew', 'mite', 'mold', 'rot', 'rust', 'scab', 'scorch', 'spot', 'virus']
+    
     
     for bound_img in img_resized:
-
         input_array = detect.img_preprocess(bound_img)
-        
-        cv2.imshow("bound_img" , bound_img)
-        cv2.waitKey(2000)
-        # Set input buffer for inference
+
         detect.SetInputBuffer(input_array, 0)
         
         # Execute model
@@ -41,10 +35,6 @@ def detect_process(mdla_path_detect, img_resized):
             print("Failed to Execute")
             return
 
-        
-        
-        # print(detect.GetOutputBuffer(0))
-        # print(class_names[np.argmax(detect.GetOutputBuffer(0))])
         output_array.append(class_names[np.argmax(detect.GetOutputBuffer(0))])
         
         disease = class_names[np.argmax(detect.GetOutputBuffer(0))]
@@ -56,7 +46,6 @@ def detect_process(mdla_path_detect, img_resized):
     for i in output_array:
         if(i != "healthy"):
             final_disease = i
-    # print(final_disease)
     
     
     return output_array, final_disease

@@ -11,8 +11,9 @@ import cv2
 import time
 import os
 
-def bound_process(mdla_path_bound, image):
+def bound_process(bound, image, initial):
     
+    start = time.time()
     
     if image.mode == 'RGBA':
         # 转换为 RGB，去除alpha通道
@@ -26,44 +27,47 @@ def bound_process(mdla_path_bound, image):
     back.paste(image, offset)
     
     img = cv2.cvtColor(np.array(back), cv2.COLOR_RGB2BGR)
-    
     back_img = back.copy()
-    back_img = back_img.resize((640, 640))
+    
     # PIL: RGB, cv2: BGR
     # Preprocess input image
-    bound = Bound(mdla_path=mdla_path_bound)
-    input_array = bound.img_preprocess(back_img)
-    # Initialize model
-    ret = bound.Initialize()
-    if ret != True:
-        print("Failed to initialize model")
-        return
+    # bound = Bound(mdla_path=mdla_path_bound)
     
+    if initial:
+        # Initialize model
+        ret = bound.Initialize()
+        if ret != True:
+            print("Failed to initialize model")
+            return
+            
+    input_array = bound.img_preprocess(back_img)
     # Set input buffer for inference
     bound.SetInputBuffer(input_array, 0)
-
     ret = bound.Execute()
     if ret != True:
         print("Failed to Execute")
         return
+        
     bound_output = bound.GetOutputBuffer(0)
-    bound_imgs = bound.postprocess(back_img)
-    save_dir = './disease'
+    bound_boxes = []
+    bound_imgs = []
+    try:
+        bound_imgs, bound_boxes = bound.postprocess(back_img)
+    except:
+        print("No bounded object")
+        
     img_resized = []
+
+    
     try:
         for bound_img in bound_imgs:
             try:
                 bound_img_resized = cv2.resize(bound_img, (128, 128), interpolation=cv2.INTER_LANCZOS4)
-                unique_filename = f"yolo_{uuid.uuid4()}.jpg"
-                save_path = os.path.join(save_dir, unique_filename)
-                cv2.imwrite(save_path, bound_img_resized)
-                # print("save path: " + save_path)
-                # print("SV PATH: " + sv_path)
                 img_resized.append(bound_img_resized)
             except:
                 print("No leaf")    
     except:
         print("No pic yet.")
     
-    return img_resized, bound_output, back_img
+    return img_resized, bound_output, back_img, bound_imgs, bound_boxes
   

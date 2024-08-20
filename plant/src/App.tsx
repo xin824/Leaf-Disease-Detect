@@ -17,13 +17,14 @@ function App() {
       .then( () => {
         onUpdate();
       })
+      
       .catch(error => {
         console.error('Error fetching the text file:', error);
       });
 
     const interval = setInterval(() => {
       onUpdate();
-    }, 1000);
+    }, 200);
 
     return () => clearInterval(interval);
   }, []);

@@ -1,4 +1,5 @@
 import os
+from model import *
 '''
 image_path = './test.JPG'
 os.chdir('./model')
@@ -18,16 +19,21 @@ def read_model_result(lines):
 
 image_path = './test.JPG'
 os.chdir('./model')
-fine_tune_dir = "../fine_tune"
+fine_tune_dir = "./healthy"
 
 #result = subprocess.run(['python3', './leaf_seg_to_detect.py','--image-path','../../plant/build/image/172.20.10.5.jpg',], capture_output=True, text=True)
 # for i in os.listdir(fine_tune_dir):
-#     result = run_process('./yolo640leafdetect.mdla', './notbad_office_finetune.mdla', './det_nonseg_trans_aug_v2.mdla', os.path.join(fine_tune_dir, i), '../tt_test.jpg')
+#    result = run_process('./yolo640leafdetect.mdla', './for_yolo_seg_v2.mdla', './det_nonseg_trans_aug_v2.mdla', os.path.join(fine_tune_dir, i), '../tt_test.jpg')
 # result = subprocess.run(['python3', './module.py','--image-path','../002.jpg',], capture_output=True, text=True)
 # print(result)
 #print(read_model_result(result.stdout))
 
-result = run_process('./yolo640leafdetect.mdla', './notbad_office_finetune.mdla', './det_seg_trans_aug_v2.mdla', '../image.jpg', '../tt_test.jpg')
+bound = Bound(mdla_path='./yolo640leafdetect_v2.mdla')
+segment = Segment(mdla_path='./for_yolo_seg_v2.mdla')
+detect = Detect(mdla_path='./best_model_seg_aug_v3.mdla')
+
+percentage = run_process(bound, segment, detect, '../005.jpg', '../bestmodel_test.jpg', True)
+print(percentage[0] + " " + percentage[1])
 os.chdir('../')
 
 

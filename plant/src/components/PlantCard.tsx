@@ -41,37 +41,16 @@ function useInterval(callback: () => void, delay: number|null) {
 function PlantCard({ plant, updateCallback, wifiIp}: PlantCardProps) {
     const [progressValue, setProgressValue] = useState(0);
     const [updateTime, setUpdateTime] = useState('Refresh to load last updated time');
-    const [key, setKey] = useState(new Date().getSeconds());
-
-
+    const [imgURL, setImgURL] = useState(`./image/${plant?.ip}/annotation.jpg`);
     useInterval(() => {
-    	if(key + 0.5 < 60){
-    	  setKey(key + 0.5);
-    	}else{
-    	  setKey(0.0);
-    	}
-	  
-	}, 500);
-	console.log(key)
-    //console.log(new Date())
-    //console.log("key: ", `./image/${plant?.ip}/${key.toFixed(1)}.jpg`)
     
-    /**async function fetchImageLastModified(imageName: string): Promise<string | null> {
-        try {
-            const response = await fetch(`${wifiIp}/update_time/${encodeURIComponent(imageName)}`);
-            if (response.ok) {
-                const data = await response.json();
-                return data.lastModified;
-            } else {
-                throw new Error('Failed to fetch image last modified time');
-            }
-        } catch (error) {
-            console.error('Error fetching image last modified time:', error);
-            return null;
-        }
-    }
-    **/
+    	const timestamp = new Date().getTime()
+  	setImgURL(`./image/${plant?.ip}/annotation.jpg?t=${timestamp}`)
+	  
+	}, 300);
 
+    console.log(imgURL)
+  
   return (
     // <div className="container-fluid" style={{backgroundColor: "#405F43", height: '100vh'}}>
         <div className="d-flex container-xl justify-content-center align-items-center">
@@ -80,15 +59,15 @@ function PlantCard({ plant, updateCallback, wifiIp}: PlantCardProps) {
                     <div className="col-md-4 d-flex justify-content-center align-items-center">
                         {/* <img src={`./image/${plant?.ip}/${(new Date().getSeconds() + ((new Date().getMilliseconds() > 500)?0.5:0)).toFixed(1).toString()}.jpg`} className="img-fluid plantPicture" alt="plant picture"/>*/}
                         {/* <img src={`../../image/${plant?.ip}.jpg`} className="img-fluid plantPicture" alt="plant picture"/> */}
-                        <img src={`./image/${plant?.ip}/${key.toFixed(2)}.jpg`} className="img-fluid plantPicture" alt="plant picture"/>
+                        <img src={imgURL} className="img-fluid plantPicture" alt="plant picture"/>
                     </div>
                     <div className="col-md-8 p-2">
                         <div className="card-body">
                             <EditBox plant={plant} updateCallback={updateCallback} wifiIp = {wifiIp}></EditBox>
-                            <div className='PlantState'>{plant?.state}</div>
+                            <div className='PlantState'>{plant?.state.slice(3)}</div>
                             <div className="progress progress-cus2" role="progressbar" aria-label="progressbar" 
                                 aria-valuenow={progressValue} aria-valuemin={0} aria-valuemax={100}>
-                                <div className="progress-bar" style={{ width: `50%`, backgroundColor: '#92BA96', borderRadius: '50px'}}></div>
+                                <div className="progress-bar" style={{ width: `${plant?.state.slice(0,3)}%`, backgroundColor: '#92BA96', borderRadius: '50px'}}></div>
                             </div>
                             <p className="card-text">
                                 <small className="font-time justify-content-end d-flex">Last updated: {plant?.update_time}</small>

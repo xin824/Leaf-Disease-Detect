@@ -18,6 +18,11 @@ device_id_directory = 'device_ip.txt'
 image_directory = "../plant/build/image"
 image_directory2 = "../plant/public/image"
 time_thre = 0.5
+initial = True
+bound = Bound(mdla_path='./model/yolo640leafdetect_v2.mdla')
+segment = Segment(mdla_path='./model/for_yolo_seg_v2.mdla')
+detect = Detect(mdla_path='./model/best_model_seg_aug_v3.mdla')
+
 if not os.path.exists(image_directory):
     os.makedirs(image_directory)
     
@@ -70,12 +75,13 @@ async def save_image(file_path_new, ip_address, now):
     image = image.resize((384, 288), Image.LANCZOS)
     file_path = ""
     #off = time_thre if (now.microsecond / 1000000 > time_thre) else 0
-    delay = 1.5
+    delay = 2.0
     
     sst = float(((now - 60.0) if now >= (60.0 - delay ) else now) + delay)
     file_path = os.path.join(image_directory, ip_address, f"{str(('%.2f'%sst))}.jpg")
     image.save(file_path)
     print(f"Saved image: {file_path}")
+    print(f"================================: {now}")
     
     while(datetime.now().second - now > (delay - 0.5)):
         now = (now + time_thre) if (now + time_thre) < 60.0 else (now + time_thre - 60.0)
@@ -84,7 +90,7 @@ async def save_image(file_path_new, ip_address, now):
         image.save(file_path)
         
         
-        print(f"copy image: {file_path}")
+        print(f"================================: {now}")
         
     return now
 
@@ -97,15 +103,16 @@ async def handle_disconnect(ip_address):
     await dir_check(path)
     for i in range(int(60 / time_thre)):
         file_path = os.path.join(image_directory, ip_address, f"{str(('%.2f'%(float(i) * time_thre)))}.jpg")
-        # image.save(file_path)
-        print(f"Saved image: {file_path}")
+        image.save(file_path)
+        print(f"Saved image build: {file_path}")
         
     path = os.path.join(image_directory2, ip_address)
     await dir_check(path)
     for i in range(int(60 / time_thre)):
     
         file_path = os.path.join(image_directory2, ip_address, f"{str(('%.2f'%(float(i) * time_thre)))}.jpg")
-        # image.save(file_path)
+        image.save(file_path)
+        print(f"Saved image public: {file_path}")
         
     with app.app_context():
         control.set_plant_disconnect(ip_address)
@@ -136,7 +143,8 @@ async def handle_connection(websocket, path):
         print('add new device: ', ip_address)
         path = os.path.join(image_directory, ip_address)
         folder_path = os.path.dirname(path)
-        os.makedir(folder_path)
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
         print('add new image folder: ', ip_address)
     
     ''' set this device's icon to connect '''
@@ -149,6 +157,10 @@ async def handle_connection(websocket, path):
     
     now = datetime.now().second
     global message
+    global initial
+    global bound
+    global segment
+    global detect
     while True:
         try:
             message = await websocket.recv()
@@ -183,9 +195,14 @@ async def handle_connection(websocket, path):
                         ''' run the model with the new image '''
                         #os.chdir('./model')
                         #result = subprocess.run(['python3', './module.py', '--image-path', '../'+file_path_new, '--save-path','../'+save_path_new], capture_output=True, text=True)
-                        result = run_process('./model/yolo640leafdetect.mdla', './model/notbad_office_finetune.mdla', './model/det_seg_trans_aug_v2.mdla', file_path_new, save_path_new)
+                        
+                        percent, result = run_process(bound, segment, detect, file_path_new, save_path_new, initial)
+                        if initial:
+                            initial = False
                         print("result info: ")
                         print(result)
+                        print("Healthy percentage:")
+                        print(percent)
                         print(type(result))
                         #os.chdir('../')
                         
@@ -199,7 +216,7 @@ async def handle_connection(websocket, path):
                             print(result)
                             # print(f"Device: {ip_address} detect result: {state}")
                             with app.app_context():
-                                updated_plant = control.update_plant_ip(ip_address, result, current_time.strftime('%Y/%m/%d %H:%M:%S'))
+                                updated_plant = control.update_plant_ip(ip_address, percent + result, current_time.strftime('%Y/%m/%d %H:%M:%S'))
                         else:
                             print(f"pic not found: {file_path_new}")
                         

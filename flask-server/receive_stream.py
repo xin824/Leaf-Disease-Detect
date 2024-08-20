@@ -128,7 +128,8 @@ async def handle_connection(websocket, path):
         print('add new device: ', ip_address)
         path = os.path.join(image_directory, ip_address)
         folder_path = os.path.dirname(path)
-        os.makedir(folder_path)
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
         print('add new image folder: ', ip_address)
     
     ''' set this device's icon to connect '''

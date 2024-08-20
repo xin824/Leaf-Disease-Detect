@@ -29,9 +29,9 @@ image = Image.new('P', (width, height))
 
 draw = ImageDraw.Draw(image)
 
-font = ImageFont.truetype(fonts.AmaticSCBold, 20)
+font = ImageFont.truetype(fonts.AmaticSCBold, 18)
 
-text = get_hostname()
+text = 'http://' + get_hostname() + ':5000'
 w, h = font.getsize(text)
 
 x = (width - w) // 2
@@ -56,7 +56,7 @@ for x in range(6):
     touch.set_led(x, 0)
 
 for x in range(6):
-    backlight.set_pixel(x, 0, 255, 0)
+    backlight.set_pixel(x, 201, 232, 204)
     touch.on(x, handler)
 
 backlight.show()

@@ -2,33 +2,39 @@ from .transforma_bound import Bound
 from .transforma_seg import Segment
 from .transforma_detect import Detect
 from NeuronRuntimeHelper import NeuronContext
+from multiprocessing import Pool, cpu_count
 from PIL import Image
 import argparse
+import uuid
 import numpy as np
 import cv2
 import time
 import os
 
-def segment_process(mdla_path_segment, img_resized):
-    segment = Segment(mdla_path=mdla_path_segment)
+def create_mask(pred_mask):
+    pred_mask = np.argmax(pred_mask, axis=-1)
+    pred_mask = pred_mask[..., np.newaxis]
+    return pred_mask
+
+
+def segment_process(segment, img_resized, initial):
+    # segment = Segment(mdla_path=mdla_path_segment)
 
     # Initialize model
-    ret = segment.Initialize()
-    if ret != True:
-        print("Failed to initialize model")
-        return
-
     
+    if initial:
+        ret = segment.Initialize()
+        if ret != True:
+            print("Failed to initialize model")
+            return
+
     img_segmented = []
-    # Check if the picture has 4 channels
-    # bound_img_resized = Image.fromarray(cv2.cvtColor(bound_img_resized, cv2.COLOR_BGR2RGB))
-    # print("Start segmenting " + str(len(img_resized)) + " images.")
-    print("img resized size: " + str(len(img_resized)))
+    masks = []
+
     for bound_img in img_resized:
 
         input_array = segment.img_preprocess(bound_img)
 
-        # Set input buffer for inference
         segment.SetInputBuffer(input_array, 0)
 
         # Execute model
@@ -36,6 +42,7 @@ def segment_process(mdla_path_segment, img_resized):
         if ret != True:
             print("Failed to Execute")
             return
+            
         image = segment.GetOutputBuffer(0)
 
         need = segment.create_mask(image)
@@ -43,14 +50,10 @@ def segment_process(mdla_path_segment, img_resized):
         white_images = np.zeros_like(input_array[0])
 
         wants = np.array([np.where(need == 0, input_array[0], white_images)])
-        # cv2.imshow("bound_img" , bound_img)
-        # cv2.waitKey(2000)
-        # segment_img = segment.postprocess(wants[0])
-        # cv2.imshow("segment_img" , wants[0])
-        # cv2.waitKey(2000)
-        img_segmented.append(wants[0])
-    print("img segmented size: " + str(len(img_segmented)))
-    return img_segmented
+        masks.append(need)
+        img_segmented.append(wants[0] * 255)
+    
+    return img_segmented, masks
 
 
     

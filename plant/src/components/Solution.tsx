@@ -68,7 +68,7 @@ function Solution({plant}:SolutionProps){
         <div className="d-flex justify-content-center align-items-center">
         <div className="collapse col-md-8" id="collapseExample">
             <div className="card card-font text-center p-4 px-5">
-                {(plant)?(sol_gen(plant?.state)):('Refresh to get solution')}
+                {(plant)?(sol_gen(plant?.state.slice(3))):('Refresh to get solution')}
             </div>
         </div>
         </div>

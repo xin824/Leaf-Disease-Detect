@@ -49,10 +49,10 @@ def set_plant_disconnect(ip):
     # new_plant = add_plant('192.168.1.3')
 
     # update plant (new disease detect result available from model)
-    # updated_plant = update_plant_ip('192.168.1.3', 'disease', '10')
+    # updated_plant = update_plant_ip('10.42.0.106', '080spot', '100')
 
     # set plant connection state to 'connect' (default)
-    # set_plant_connect('192.168.1.1')
+    # set_plant_connect('192.168.1.3')
 
     # set plant connection state to 'disconnect'
     # set_plant_disconnect('192.168.1.1')
