@@ -24,7 +24,7 @@ function App() {
 
     const interval = setInterval(() => {
       onUpdate();
-    }, 200);
+    }, 350);
 
     return () => clearInterval(interval);
   }, []);

@@ -7,6 +7,7 @@ import sys
 from datetime import datetime
 from model import *
 import control
+import time
 import math
 from config import app
 import subprocess
@@ -21,7 +22,7 @@ fps = 6
 initial = True
 bound = Bound(mdla_path='./model/yolo640leafdetect_v2.mdla')
 segment = Segment(mdla_path='./model/for_yolo_seg_v2.mdla')
-detect = Detect(mdla_path='./model/best_model_seg_aug_v5.mdla')
+detect = Detect(mdla_path='./model/best_model_seg_aug_v6.mdla')
 connected_clients = set()
 
 if not os.path.exists(image_directory):
@@ -70,6 +71,7 @@ async def dir_check(path):
 async def write_image(file_path_new, m):
     with open(file_path_new, "wb") as f:
         f.write(m)
+
 
 async def save_image(file_path_new, ip_address, now):
     image = Image.open(file_path_new)
@@ -133,14 +135,25 @@ async def handle_connection(websocket, path):
             message = await websocket.recv()
             
             ''' determine whether the message is a image '''
+            if message == None:
+                print("No message")
+                continue
+            
             if len(message) > 5000:
                 
                 if is_valid_image(message):
+                    enter_time = time.time()
+                    await write_image(file_path_new, message)
+                    
                     current_time = datetime.now()
-                    await write_image(file_path_new, message)      
-                    percent, result = run_process(bound, segment, detect, file_path_new, save_path_new, initial)
-                    if initial:
-                        initial = False
+                    cur_time = time.time()
+                    if cur_time - enter_time <= 500:
+                        percent, result = run_process(bound, segment, detect, file_path_new, save_path_new, initial)
+                        message = None
+                        if initial:
+                            initial = False
+                    else:
+                        continue
                     
                     if result != "":
                         with app.app_context():

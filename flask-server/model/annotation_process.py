@@ -8,6 +8,7 @@ import numpy as np
 import cv2
 import time
 import os
+import asyncio
 from multiprocessing import Pool, cpu_count
 
 def return_prediction_for_image(output_array, bound_boxes, img_resized, masks, original_image):
@@ -147,6 +148,7 @@ def draw_bbox_on_image(output_image, output_array, bound_output):
                     color = (0, 255, 0)
                 draw_boxes(output_image, boxes[i], scores[i], class_ids[i], color)
         return output_image
+   
 
 # def annotation_process(save_path, output_array, bound_output, original_image, img_resized, masks, bound_boxes):
 def annotation_process(save_path, output_array, bound_output, original_image, img_resized, bound_boxes):
@@ -175,8 +177,9 @@ def annotation_process(save_path, output_array, bound_output, original_image, im
         annotated_image = cv2.resize(original_image, (128*3, 128*3))
         annotated_image = annotated_image[48:336, 0:384]
         print("Annotation failed")
-        
+    
     cv2.imwrite(save_path, annotated_image, [cv2.IMWRITE_JPEG_QUALITY, 60])
+    
     
     print("image:" + save_path)
 

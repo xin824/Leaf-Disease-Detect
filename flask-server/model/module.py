@@ -8,6 +8,7 @@ from .annotation_process import *
 from NeuronRuntimeHelper import NeuronContext
 from PIL import Image
 import argparse
+import asyncio
 import numpy as np
 import cv2
 import time

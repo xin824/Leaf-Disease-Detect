@@ -17,10 +17,11 @@ interface SolutionProps{
 function Solution({plant}:SolutionProps){
     const [isCollapsed, setIsCollapsed] = useState(true);
 
-    const toggleCollapse = () => {
-        setIsCollapsed(!isCollapsed);
-    };
-    const sol_gen = (d:string) => {
+  const toggleCollapse = () => {
+    setIsCollapsed(!isCollapsed);
+  };
+  
+  const sol_gen = (d:string) => {
     switch(d){
         case 'blight':
             return 'Blight is a plant disease causing rapid decay of leaves, stems, and fruits, often characterized by dark, sunken lesions. To manage blight, remove and discard affected plant parts. Improve air circulation and avoid overhead watering to keep foliage dry. Apply fungicides as needed, and ensure proper sanitation of tools and garden equipment. Monitor nearby plants to prevent spread and consider rotating crops to minimize recurrence.';
@@ -51,28 +52,32 @@ function Solution({plant}:SolutionProps){
         default:
             return 'Your plant is healthy!';
     }
-        
-}
-    
+    }
+
   return (
     <div className="container-lg my-2">
-        <div className="d-flex justify-content-center align-items-center">
-            <p className="d-inline-flex gap-1">
-                <button className={`btn-solution p-2 px-4 ${isCollapsed ? 'btn-collapsed' : 'btn-expanded'}`}
-                        type="button" data-bs-toggle="collapse" onClick={toggleCollapse}
-                        data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
-                    {isCollapsed?"Solution?":"close"}
-                </button>
-            </p>
+      <div className="d-flex justify-content-center align-items-center">
+        <p className="d-inline-flex gap-1">
+          <button
+            className={`btn-solution p-2 px-4 ${isCollapsed ? 'btn-collapsed' : 'btn-expanded'}`}
+            type="button"
+            data-bs-toggle="collapse"
+            onClick={toggleCollapse}
+            data-bs-target="#collapseExample"
+            aria-expanded={!isCollapsed}
+            aria-controls="collapseExample"
+          >
+            {isCollapsed ? "Solution?" : "Close"}
+          </button>
+        </p>
+      </div>
+      <div className="d-flex justify-content-center align-items-center">
+        <div className={`collapse col-md-8 ${isCollapsed ? '' : 'show'}`} id="collapseExample">
+          <div className="card card-font text-center p-4 px-5">
+            {plant ? sol_gen(plant?.state.slice(3)) : 'Refresh to get solution'}
+          </div>
         </div>
-        <div className="d-flex justify-content-center align-items-center">
-        <div className="collapse col-md-8" id="collapseExample">
-            <div className="card card-font text-center p-4 px-5">
-                {(plant)?(sol_gen(plant?.state.slice(3))):('Refresh to get solution')}
-            </div>
-        </div>
-        </div>
-        
+      </div>
     </div>
   );
 }
