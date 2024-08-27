@@ -71,12 +71,12 @@
   - In the main page of the website, all the cameras that have been connected will be listed on the website. 
   - On the left, the wifi icon show the connection status of the camera.
   - Press the button on the right for more details.
-  ![main_page](https://github.com/xin824/Leaf-Disease-Detect-Website/blob/master/readme/main_page.png)
+  ![image](https://github.com/xin824/Leaf-Disease-Detect-Website/blob/master/readme/main_page.png)
   - The detail page show the disease name, healthy rate, last updated time of the image, and the newest image from the camera or model.
   - We can modify the name by press the pencil icon.
-  ![detail_page](https://github.com/xin824/Leaf-Disease-Detect-Website/blob/master/readme/detail_page.png)
+  ![image](https://github.com/xin824/Leaf-Disease-Detect-Website/blob/master/readme/detail_page.png)
   - Pressing the solution button, the website will help us to manage our plant.
-![solution](https://github.com/xin824/Leaf-Disease-Detect-Website/blob/master/readme/solution.png)
+  ![image](https://github.com/xin824/Leaf-Disease-Detect-Website/blob/master/readme/solution.png)
   - The website is built with **React**, after modify a script, run `$ npm run build` and the flask server will automatically update the website.
   - By reading the wifi_ip.txt, the website  connect to database. If something went wrong, please check whether the context of this file is same as the URL generated from Flask.
   
