@@ -72,14 +72,14 @@
   - On the left, the wifi icon show the connection status of the camera.
   - Press the button on the right for more details.
     
-  ![image](https://github.com/xin824/Leaf-Disease-Detect-Website/blob/master/readme/main_page.png)
+  ![main_page](https://github.com/xin824/Leaf-Disease-Detect-Website/blob/master/readme/main_page.png)
   - The detail page show the disease name, healthy rate, last updated time of the image, and the newest image from the camera or model.
   - We can modify the name by press the pencil icon.
     
-  ![image](https://github.com/xin824/Leaf-Disease-Detect-Website/blob/master/readme/detail_page.png)
+  ![detail_page](https://github.com/xin824/Leaf-Disease-Detect-Website/blob/master/readme/detail_page.png)
   - Pressing the solution button, the website will help us to manage our plant.
     
-  ![image](https://github.com/xin824/Leaf-Disease-Detect-Website/blob/master/readme/solution.png)
+  ![solution](https://github.com/xin824/Leaf-Disease-Detect-Website/blob/master/readme/solution.png)
   - The website is built with **React**, after modify a script, run `$ npm run build` and the flask server will automatically update the website.
   - By reading the wifi_ip.txt, the website  connect to database. If something went wrong, please check whether the context of this file is same as the URL generated from Flask.
   
@@ -102,4 +102,6 @@
     ```
     If the interval is smaller than model detection speed, the refresh rate will depend on the model speed, or it will update every 300ms consistently.
     
-## Demo Video
+## Demo
+  - [VIDEO](https://drive.google.com/file/d/1VMdWSB859pn9GvjFgX6HaR9FnebWXNO0/view?usp=sharing)
+  - [PPT](https://www.canva.com/design/DAGNVaz23zY/tQ0HBksq_1Lk0FTrTeDAtA/edit?utm_content=DAGNVaz23zY&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
