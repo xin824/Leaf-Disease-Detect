@@ -30,7 +30,7 @@
   - Calling control.py to modify the database of the website.
   - Calling run_process function to predict the image, and update the predict result on the website.
   - To change each model, just modify the path assigned globally on the beginning of the code.
-  - This code will record all the cameras that have been connected, and list all of them on the website.
+  - This code will record all the cameras that have been connected in `device_ip`, and list all of them on the website.
   - Once a new camera connect to the websocket, it will add a new column to the device list of the website.
   - We will save the newest image from the camera as `os.path.join(image_directory, ip_address, f"new.jpg")`
   
